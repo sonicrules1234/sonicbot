@@ -1,0 +1,12 @@
+import random
+arguments = ["self", "info", "args"]
+helpstring = "roulette"
+needop = False
+
+def main(connection, info, args) :
+    prob = [2, 3]
+    chances = [True for x in range(prob[0])] + [False for y in range(prob[1])]
+    choice = random.choice(chances)
+    if choice :
+        connection.rawsend("KICK %s %s :You lost roulette!\n" % (info["channel"], info["sender"]))
+    else : connection.ircsend(info["channel"], "*click*")
