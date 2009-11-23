@@ -150,7 +150,7 @@ class sonicbot :
             self.plugins["on_TIME"].main(self, info, conf)
 
     def on_VERSION(self, info) :
-        self.rawsend("NOTICE %s :VERSION SonicBot version 3.1.0\n" % (info["sender"]))
+        self.rawsend("NOTICE %s :VERSION SonicBot version 3.1.1\n" % (info["sender"]))
 
     def on_PRIVMSG(self, info) :
         if info["channel"] in self.channels : self.logwrite(info["channel"], "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["message"]))
@@ -286,7 +286,7 @@ class sonicbot :
             self.on_352(info)
         elif "on_%s" % (info["mode"]) in self.plugins["pluginlist"].eventlist :
             try :
-                exec("self.plugins['on_%s'].main(self, info, conf)" % (info["mode"]))
+                self.plugins['on_%s' % info["mode"]].main(self, info, conf)
             except :
                 self.ircsend(conf.owner, traceback.format_exc())
     def command_parser(self, info) :
@@ -388,12 +388,12 @@ class sonicbot :
                 else : notacommand2 = True
             elif args[0] in self.plugins["pluginlist"].pluginlist :
                 try :
-                    arguments = ", ".join(eval("self.plugins['%s'].arguments" % args[0]))
-                    if eval("self.plugins['%s'].needop" % (args[0])) :
+                    arguments = eval(", ".join(self.plugins[args[0]].arguments))
+                    if self.plugins[args[0]].needop :
                         if info["sender"] in conf.admin and info["hostname"] in conf.admin[info["sender"]] :
-                            exec("self.plugins['%s'].main(%s)" % (args[0], arguments))
+                            self.plugins[args[0]].main(*arguments)
                         else : self.ircsend(info["channel"], "%s: You do not have enough permissions to use that command!" % (info["sender"]))
-                    else : exec("self.plugins['%s'].main(%s)" % (args[0], arguments))
+                    else : self.plugins[args[0]].main(*arguments)
                 except: 
                     traceback.print_exc()
                     self.ircsend(info["channel"], "Error.  The syntax for that command is: %s" % (eval("self.plugins['%s'].helpstring" % (args[0]))))
