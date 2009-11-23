@@ -339,7 +339,7 @@ class sonicbot :
                     world.relay_channels.remove(info["channel"])
                     self.ircsend(info["channel"], "This channel has been removed the relay list") 
                 else : self.ircsend(info["channel"], "This channel is not on the relay list!")
-            elif args[0] == "connect" :
+            elif args[0] == "connect" and info["sender"] == conf.owner and info["hostname"] in conf.admin[info["sender"]]:
                 conf.hosts.append(args[1])
                 conf.ports.append(int(args[2]))
                 world.hostcount += 1
