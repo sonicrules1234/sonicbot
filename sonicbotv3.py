@@ -407,10 +407,23 @@ class sonicbot :
 
     def ircsend(self, targ_channel, msg_out) :
         for line in msg_out.split("\n") :
-            if targ_channel.startswith("#") or targ_channel.lower().endswith("serv") : self.rawsend("PRIVMSG %s :%s\n" % (targ_channel, self.ircfilter(line, conf.bads)))
-            else : self.rawsend("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(line, conf.bads)))
-            if line.startswith("\x01ACTION") : self.logwrite(targ_channel, "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, " ".join(line.split(" ")[1:]).replace("\x01", "")))
-            else : self.logwrite(targ_channel, "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, self.ircfilter(line, conf.bads)))
+            length = len("PRIVMSG %s :\n" % (targ_channel))
+            parts = []
+            current = ""
+            for char in line :
+                if len(current) + length < 400:
+                    current += char
+                else :
+                    parts.append(current)
+                    current = char
+            if current != "" :
+                parts.append(current)
+            for part in parts :
+                
+                if targ_channel.startswith("#") or targ_channel.lower().endswith("serv") : self.rawsend("PRIVMSG %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)))
+                else : self.rawsend("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)))
+                if line.startswith("\x01ACTION") : self.logwrite(targ_channel, "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, " ".join(part.split(" ")[1:]).replace("\x01", "")))
+                else : self.logwrite(targ_channel, "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, self.ircfilter(part, conf.bads)))
 
 
         
