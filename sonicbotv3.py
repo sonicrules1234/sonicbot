@@ -24,7 +24,7 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import time, glob, shelve, traceback, os, aiml, imp
+import time, glob, shelve, traceback, os, aiml, imp, ssl
 import socket, conf, thread, world
 class sonicbot :
     def __init__(self) :
@@ -75,6 +75,7 @@ class sonicbot :
     def start(self, host, port) :
         self.host = host
         self.port = port
+        if conf.ssl[conf.hosts.index(self.host)] : self.sock = ssl.wrap_socket(self.sock)
         self.connect()
 
     def dataReceived(self, data):
@@ -102,7 +103,7 @@ class sonicbot :
                             self.rawsend("JOIN %s \n" % (i))
                     info["whois"] = info["words"][0]
                     info["sender"] = info["whois"].split("!")[0]
-                except : print "ok"
+                except : traceback.print_exc()
                 try : 
                     info["hostname"] = info["whois"].split("@")[1]
                     self.nicks[info["sender"]] = info["hostname"]
