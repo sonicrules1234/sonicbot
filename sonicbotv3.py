@@ -151,9 +151,11 @@ class sonicbot :
             self.logs[channel].close()
         del world.connections[self.host]
         conf.ports.pop(conf.hosts.index(self.host))
+        conf.ssl.pop(conf.hosts.index(self.host))
         conf.hosts.remove(self.host)
         del conf.channels[self.host]
-        world.hostcount -= 1		
+        world.hostcount -= 1
+        self.sock.close()
     def on_ACTION(self, info, args) :
         self.logwrite(info["channel"], "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], " ".join(args[1:]).replace("", "")))
         if not conf.debug : "[%s] *%s %s\n" % (time.strftime("%H:%M:%S"), info["sender"], " ".join(args[1:]).replace("", ""))
@@ -358,8 +360,11 @@ class sonicbot :
                 conf.hosts.append(args[1])
                 conf.ports.append(int(args[2]))
                 world.hostcount += 1
-                world.hostnicks[args[1]] = args[3]
-                conf.channels[args[1]] = args[4:]
+                if args[3] == "1" :
+                    conf.ssl.append(True)
+                else : conf.ssl.append(False)
+                world.hostnicks[args[1]] = args[4]
+                conf.channels[args[1]] = args[5:]
                 newbotinstance = sonicbot()
                 thread.start_new_thread(newbotinstance.start, (args[1], int(args[2])))
             elif args[0] == "eval" and info["sender"] == conf.owner and info["hostname"] in conf.admin[info["sender"]] :
