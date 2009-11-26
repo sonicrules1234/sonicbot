@@ -2,3 +2,5 @@
 *.db
 conf.py
 world.py
+*.txt
+logs
