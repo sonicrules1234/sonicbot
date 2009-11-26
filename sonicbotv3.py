@@ -34,7 +34,10 @@ class sonicbot :
     def connect(self) :
         print "So far so good"
         try :
+            
             self.sock.connect((self.host, self.port))
+            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
+                self.sock = socket.ssl(self.sock)
             self.rawsend("NICK %s \n" % (conf.nick))
             self.rawsend("USER %s * * :%s\n" % (conf.ident, conf.realname))
             self.plugins = {}
@@ -80,7 +83,6 @@ class sonicbot :
         if conf.ssl[conf.hosts.index(self.host)] :
             if world.pythonversion == "2.6" :
                 self.sock = ssl.wrap_socket(self.sock)
-            else : self.sock = socket.ssl(self.sock)
         self.connect()
 
     def dataReceived(self, data):
@@ -129,13 +131,20 @@ class sonicbot :
                 self.info = info
                 if error != 1 : self.prettify(info)
     def rawsend(self, msg_out) :
-        self.sock.send(msg_out)
+        if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
+            self.sock.write(msg_out)
+        else :
+            self.sock.send(msg_out)
         print "[OUT]%s" % (msg_out)
     def startLoop(self) :
         data = True
         while data :
-            data = self.sock.recv(4096)
-            if data : self.dataReceived(data)
+            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
+                data = self.sock.read()
+                if data : self.dataReceived(data)
+            else :
+                data = self.sock.recv(4096)
+                if data : self.dataReceived(data)
         print "connection lost"
         self.logf.close()
         for channel in self.channels :
