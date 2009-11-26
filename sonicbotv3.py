@@ -24,11 +24,12 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import time, glob, shelve, traceback, os, aiml, imp, ssl
+import time, glob, shelve, traceback, os, aiml, imp
 import socket, conf, thread, world
+if world.pythonversion == "2.6" :
+    import ssl
 class sonicbot :
-    def __init__(self) :
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
         
     def connect(self) :
         print "So far so good"
@@ -73,9 +74,13 @@ class sonicbot :
         self.startLoop()
 
     def start(self, host, port) :
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = host
         self.port = port
-        if conf.ssl[conf.hosts.index(self.host)] : self.sock = ssl.wrap_socket(self.sock)
+        if conf.ssl[conf.hosts.index(self.host)] :
+            if world.pythonversion == "2.6" :
+                self.sock = ssl.wrap_socket(self.sock)
+            else : self.sock = socket.ssl(self.sock)
         self.connect()
 
     def dataReceived(self, data):
