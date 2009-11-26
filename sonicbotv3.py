@@ -77,12 +77,17 @@ class sonicbot :
         self.startLoop()
 
     def start(self, host, port) :
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
         self.host = host
         self.port = port
+        if conf.ipv6[conf.hosts.index(self.host)] :
+            self.iptype = socket.AF_INET6
+        else :
+            self.iptype = socket.AF_INET
         if conf.ssl[conf.hosts.index(self.host)] :
             if world.pythonversion == "2.6" :
                 self.sock = ssl.wrap_socket(self.sock)
+        self.sock = socket.socket(self.iptype, socket.SOCK_STREAM)
         self.connect()
 
     def dataReceived(self, data):
@@ -355,8 +360,11 @@ class sonicbot :
                 if args[3] == "1" :
                     conf.ssl.append(True)
                 else : conf.ssl.append(False)
-                world.hostnicks[args[1]] = args[4]
-                conf.channels[args[1]] = args[5:]
+                if args[4] == "1" :
+                    conf.ipv6.append(True)
+                else : conf.ipv6.append(False)
+                world.hostnicks[args[1]] = args[5]
+                conf.channels[args[1]] = args[6:]
                 newbotinstance = sonicbot()
                 thread.start_new_thread(newbotinstance.start, (args[1], int(args[2])))
             elif args[0] == "eval" and info["sender"] == conf.owner and info["hostname"] in conf.admin[info["sender"]] :

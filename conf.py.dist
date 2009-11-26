@@ -1,6 +1,7 @@
 hosts = [""]
 ports = [6667]
 ssl = [False]
+ipv6 = [False]
 ident = ""
 nick = ident
 channels = {}
