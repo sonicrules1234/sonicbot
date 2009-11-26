@@ -135,7 +135,7 @@ class sonicbot :
             self.sock.write(msg_out)
         else :
             self.sock.send(msg_out)
-        print "[OUT]%s" % (msg_out)
+        if conf.debug : print "[OUT]%s" % (msg_out)
     def startLoop(self) :
         data = True
         while data :
@@ -171,7 +171,6 @@ class sonicbot :
 
     def on_PRIVMSG(self, info) :
         if info["channel"] in self.channels : self.logwrite(info["channel"], "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["message"]))
-        if not conf.debug : print "[%s] <%s> %s\n" % (time.strftime("%H:%M:%S"), info["sender"], info["message"])
         if not info["message"]: return
         if info["message"][0] == conf.prefix or info["message"].split(" ")[0] == conf.nick + ":" :
             self.command_parser(info)
@@ -179,7 +178,6 @@ class sonicbot :
             self.plugins["on_PRIVMSG"].main(self, info, conf)
 
     def on_JOIN(self, info) :
-        if not conf.debug : print "[%s] ***%s has joined %s\n" % (time.strftime("%H:%M:%S"), info["sender"], info["channel"])
         if conf.nick == info["sender"] :
             self.logs[info["channel"]] = open("logs/%s.txt" % (info["channel"]), "a")
             self.channels[info["channel"]] = []
@@ -191,7 +189,6 @@ class sonicbot :
 
     def on_PART(self, info) :
         self.logwrite(info["channel"], "[%s] ***%s has parted %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
-        if not conf.debug : print "[%s] ***%s has parted %s\n" % (time.strftime("%H:%M:%S"), info["sender"], info["channel"])
         if conf.nick == info["sender"] :
             self.logs[info["channel"]].close()
             del self.channels[info["channel"]]
@@ -201,7 +198,6 @@ class sonicbot :
 
     def on_QUIT(self, info) :
         quitmessage = " ".join(info["words"][2:])[1:]
-        if not conf.debug : print "[%s] ***%s has quit (%s)\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], quitmessage)
         for channel in self.channels :
             if info["sender"] in self.channels[channel] :
                 self.channels[channel].remove(info["sender"])
@@ -213,14 +209,12 @@ class sonicbot :
     def on_KICK(self, info) :
         recvr = info["words"][3]
         self.logwrite(info["channel"], "[%s] **%s has kicked %s from %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], recvr, info["channel"]))
-        if not conf.debug : print "[%s] **%s has kicked %s from %s" % (time.strftime("%H:%M:%S"), info["sender"], recvr, info["channel"])
         self.channels[info["channel"]].remove(recvr)
         if "on_KICK" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_KICK"].main(self, info, conf)
 
     def on_TOPIC(self, info) :
         self.logwrite(info["channel"], '[%s] **%s has changed the topic in %s to "%s"\n' % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"], info["message"]))
-        if not conf.debug : print '[%s] **%s has changed the topic in %s to "%s"' % (time.strftime("%H:%M:%S"), info["sender"], info["channel"], info["message"])
         if "on_TOPIC" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_TOPIC"].main(self, info, conf)
 
@@ -229,10 +223,8 @@ class sonicbot :
         if len(info["words"]) > 4 :
             recvr = info["words"][4]
             self.logwrite(info["channel"], "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, recvr))
-            if not conf.debug : print "[%s] **%s set mode %s on %s" % (time.strftime("%H:%M:%S"), info["sender"], mode, recvr)
         else :
             self.logwrite(conf.nick, "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, info["channel"]))
-            if not conf.debug : print "[%s] **%s set mode %s on %s" % (time.strftime("%H:%M:%S"), info["sender"], mode, info["channel"])
         if "on_MODE" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_MODE"].main(self, info, conf)
 
@@ -450,6 +442,7 @@ class sonicbot :
     def logwrite(self, channel, log) :
         if channel in self.channels :
             self.logs[channel].write(log)
+            if not conf.debug : print log
             if channel != conf.nick :
                 if channel in world.relay_channels :
                     for server in world.connections :
