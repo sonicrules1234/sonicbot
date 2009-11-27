@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import cgi, cgitb, glob, time, os, Cookie, hashlib, shelve, bbcode
 form = cgi.FieldStorage()
-
+dbpath = ""
 def cookiecheck() :
     if 'HTTP_COOKIE' in os.environ :
         c = os.environ['HTTP_COOKIE']
@@ -14,7 +14,7 @@ def cookiecheck() :
 handler = cookiecheck()
 
 def printuserlist() :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db")
+    mail = shelve.open(dbpath)
     print "Content-Type: text/html\n"
     print """<html>
 <head>
@@ -30,7 +30,7 @@ def printuserlist() :
 </html>"""
 
 def sendmessage(handler, forms) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db", writeback=True)
+    mail = shelve.open(dbpath, writeback=True)
     print "Content-Type: text/html\n"
     if mail.has_key(forms["senduser"].value) :
         if not mail[forms["senduser"].value]["messages"].has_key(handler["username"]) :
@@ -129,7 +129,7 @@ Password:
 
 
 def auth1(forms) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db")
+    mail = shelve.open(dbpath)
     if mail.has_key(forms["username"].value) :
         if mail[forms["username"].value]["password"] == hashlib.sha512(forms["password"].value).hexdigest() :
             mail.close()
@@ -163,7 +163,7 @@ def auth1(forms) :
 </html>"""
 
 def auth2(handler) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db")
+    mail = shelve.open(dbpath)
     if mail.has_key(handler["username"]) :
         if mail[handler["username"]]["password"] == handler["password"] :
             mail.close()
@@ -196,7 +196,7 @@ def auth2(handler) :
 </html>"""
         mail.close()
 def deletemail(forms, handler) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db", writeback=True)
+    mail = shelve.open(dbpath, writeback=True)
     del mail[handler["username"]]["messages"][forms["pid"].value][forms["tid"].value]
     mail[handler["username"]]["messages"][forms["pid"].value]["msgorder"].remove([forms["tid"].value, False])
     mail.sync()
@@ -211,7 +211,7 @@ def deletemail(forms, handler) :
     printmail(handler["username"])
 
 def printmail(user) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db", writeback=True)
+    mail = shelve.open(dbpath, writeback=True)
     mail[user]["notify"] = False
     print "Content-Type: text/html\n"
     print "<html>\n<head>\n<title>%s's mail</title>\n</head>\n<body>" % (user)
@@ -255,7 +255,7 @@ New Password:
 </html>"""
     
 def changepass(handler, forms) :
-    mail = shelve.open("/home/sonicrules1234/sonicbot-freenode/mail.db")
+    mail = shelve.open(dbpath)
     temp = mail[handler["username"]]
     temp["password"] = hashlib.sha512(forms["newpassword"].value).hexdigest()
     mail[handler["username"]] = temp
