@@ -6,6 +6,7 @@ ident = ""
 nick = ident
 channels = {"":["#sonicbot"]}
 realname = nick
+connectcommands = {}
 bpass = ""
 owner = ""
 admin = {}
