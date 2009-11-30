@@ -77,17 +77,18 @@ class sonicbot :
         self.startLoop()
 
     def start(self, host, port) :
-        
-        self.host = host
-        self.port = port
-        if conf.ipv6[conf.hosts.index(self.host)] :
-            self.iptype = socket.AF_INET6
-        else :
-            self.iptype = socket.AF_INET
-        if conf.ssl[conf.hosts.index(self.host)] :
-            if world.pythonversion == "2.6" :
-                self.sock = ssl.wrap_socket(self.sock)
-        self.sock = socket.socket(self.iptype, socket.SOCK_STREAM)
+        try :
+            self.host = host
+            self.port = port
+            if conf.ipv6[conf.hosts.index(self.host)] :
+                self.iptype = socket.AF_INET6
+            else :
+                self.iptype = socket.AF_INET
+            self.sock = socket.socket(self.iptype, socket.SOCK_STREAM)
+            if conf.ssl[conf.hosts.index(self.host)] :
+                if world.pythonversion == "2.6" :
+                    self.sock = ssl.wrap_socket(self.sock)
+        except : traceback.print_exc()
         self.connect()
 
     def dataReceived(self, data):
