@@ -34,7 +34,6 @@ class sonicbot :
     def connect(self) :
         print "So far so good"
         try :
-            
             self.sock.connect((self.host, self.port))
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
                 self.sock = socket.ssl(self.sock)
@@ -74,6 +73,7 @@ class sonicbot :
             self.ai.respond("load aiml b")
         self.nicks = {}
         self.buffer = ""
+        self.chanmodes = {}
         self.startLoop()
 
     def start(self, host, port) :
@@ -190,6 +190,7 @@ class sonicbot :
         if conf.nick == info["sender"] :
             self.logs[info["channel"]] = open("logs/%s.txt" % (info["channel"]), "a")
             self.channels[info["channel"]] = []
+            self.chanmodes[info["channel"]] = {}
         else : self.channels[info["channel"]].append(info["sender"])
         self.logwrite(info["channel"], "[%s] ***%s has joined %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
         if "on_JOIN" in self.plugins["pluginlist"].eventlist :
@@ -201,6 +202,7 @@ class sonicbot :
         if conf.nick == info["sender"] :
             self.logs[info["channel"]].close()
             del self.channels[info["channel"]]
+            del self.chanmodes[info["channel"]]
         else : self.channels[info["channel"]].remove(info["sender"])
         if "on_PART" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_PART"].main(self, info, conf)
@@ -259,8 +261,14 @@ class sonicbot :
         for nick in info["words"][5:] :
             if nick != "" :
                 correctnick = nick.replace(":", "")
-                if correctnick[0] in ["%", "@", "&", "~", "+"] :
-                    correctnick = correctnick[1:]
+                newnick = nick.replace(":", "")
+                for mode in ["!", "%", "@", "&", "~", "+"] :
+                    newnick = newnick.replace(mode, "")
+                self.chanmodes[info["words"][4]][newnick] = []
+                for mode in ["!", "%", "@", "&", "~", "+"] :
+                    if mode in correctnick :
+                        self.chanmodes[info["words"][4]][newnick].append(mode)
+                correctnick = newnick
                 self.channels[info["words"][4].lower()].append(correctnick)
         if "on_353" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_353"].main(self, info, conf)
