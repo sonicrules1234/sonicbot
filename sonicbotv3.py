@@ -304,7 +304,7 @@ class sonicbot :
                 newnick = nick.replace(":", "")
                 for mode in ["!", "%", "@", "&", "~", "+"] :
                     newnick = newnick.replace(mode, "")
-                self.chanmodes[info["words"][4]][newnick] = []
+                self.chanmodes[info["words"][4].lower()][newnick] = []
                 for mode in ["!", "%", "@", "&", "~", "+"] :
                     if mode in correctnick :
                         self.chanmodes[info["words"][4].lower()][newnick].append(mode)
