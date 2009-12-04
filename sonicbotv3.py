@@ -74,6 +74,8 @@ class sonicbot :
         self.nicks = {}
         self.buffer = ""
         self.chanmodes = {}
+
+        
         self.startLoop()
 
     def start(self, host, port) :
@@ -231,9 +233,23 @@ class sonicbot :
 
     def on_MODE(self, info) :
         mode = info["words"][3]
+        modesymbols = {"y":"!", "h":"%", "o":"@", "v":"+", "F":"~", "q":"~", "a":"&"}
         if len(info["words"]) > 4 :
-            recvr = info["words"][4]
-            self.logwrite(info["channel"], "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, recvr))
+            recvrs = info["words"][4:]
+            recvr = 0
+            self.logwrite(info["channel"], "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, " ".join(recvrs)))
+            for letter in mode:
+                if letter == "+" : modetype = True
+                elif letter == "-" : modetype = False
+                else :
+                    
+                    if modetype :
+                        if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                            self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
+                    elif not modetype :
+                        if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                            self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
+                    recvr += 1
         else :
             self.logwrite(conf.nick, "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, info["channel"]))
         if "on_MODE" in self.plugins["pluginlist"].eventlist :
