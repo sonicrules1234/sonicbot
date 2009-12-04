@@ -74,8 +74,16 @@ class sonicbot :
         self.nicks = {}
         self.buffer = ""
         self.chanmodes = {}
-
-        
+        self.users = shelve.open("users-%s.db" % (world.hostnicks[self.host]), writeback=True)
+        if not self.users.has_key("users") :
+            for admin in conf.admin.keys() :
+                self.users[admin] = {"userlevel":4, "hostnames":conf.admin[admin]}
+                self.users.sync()
+            self.users[conf.owner]["userlevel"] = 5
+            self.users.sync()
+        if not self.users.has_key("channels") :
+            self.users["channels"] = {}
+            self.users.sync()
         self.startLoop()
 
     def start(self, host, port) :
@@ -152,10 +160,10 @@ class sonicbot :
         while data :
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
                 data = self.sock.read()
-                if data : self.dataReceived(data)
+                if data : thread.start_new_thread(self.dataReceived, (data,))
             else :
                 data = self.sock.recv(4096)
-                if data : self.dataReceived(data)
+                if data : thread.start_new_thread(self.dataReceived, (data,))
         print "connection lost"
         self.logf.close()
         for channel in self.channels :
@@ -193,6 +201,22 @@ class sonicbot :
             self.logs[info["channel"]] = open("logs/%s.txt" % (info["channel"]), "a")
             self.channels[info["channel"]] = []
             self.chanmodes[info["channel"]] = {}
+            if info["channel"] in self.users["channels"] :
+                if self.users["channels"][info["channel"]]["registered"] :
+                    pass
+                else :
+                    self.users["channels"][info["channel"]]["enabled"] = []
+                    self.users.sync()
+                    for plugin in self.plugins["pluginlist"].pluginlist :
+                        self.users["channels"][info["channel"]]["enabled"].append(plugin)
+                        self.users.sync()
+            else :
+                self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
+
+                self.users.sync()
+                for plugin in self.plugins["pluginlist"].pluginlist :
+                    self.users["channels"][info["channel"]]["enabled"].append(plugin)
+                    self.users.sync()
         else : self.channels[info["channel"]].append(info["sender"])
         self.logwrite(info["channel"], "[%s] ***%s has joined %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
         if "on_JOIN" in self.plugins["pluginlist"].eventlist :
@@ -432,12 +456,23 @@ class sonicbot :
                 conf.ipv6 = tempipv6
                 conf.ignorelist = tempignorelist
                 conf.hostignores = temphostignores
+                self.oldplugins = self.plugins.copy()
                 self.plugins = {}
                 print repr(self.plugins)
                 for plugin in glob.glob("plugins/*.py") :
                     if plugin != "plugins/__init__.py" and plugin != "plugins\\__init__.py" :
                         self.plugins[plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", "")] = imp.load_source(plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", ""), plugin)
-
+                channels = self.users["channels"]
+                for plugin in self.oldplugins["pluginlist"].pluginlist :
+                    if plugin not in self.plugins["pluginlist"].pluginlist :
+                        
+                        temp = self.users["channels"].keys()
+                        for channel in temp :
+                            if plugin in self.users["channels"]["enabled"] :
+                                channels[channel]["enabled"].remove(plugin)
+                self.users["channels"] = channels
+                self.users.sync()
+                del self.oldplugins
                 self.ircsend(info["channel"], "Config and plugins reloaded.")
             else : notacommand = True
         if info["message"][0] == conf.prefix and info["sender"] not in conf.ignorelist and info["hostname"] not in conf.hostignores:
@@ -455,11 +490,13 @@ class sonicbot :
             elif args[0] in self.plugins["pluginlist"].pluginlist :
                 try :
                     arguments = eval(", ".join(self.plugins[args[0]].arguments))
-                    if self.plugins[args[0]].needop :
-                        if info["sender"] in conf.admin and info["hostname"] in conf.admin[info["sender"]] :
-                            self.plugins[args[0]].main(*arguments)
-                        else : self.ircsend(info["channel"], "%s: You do not have enough permissions to use that command!" % (info["sender"]))
-                    else : self.plugins[args[0]].main(*arguments)
+                    if args[0] in self.users["channels"][info["channel"]]["enabled"] :
+                        if self.plugins[args[0]].needop :
+                            if info["sender"] in conf.admin and info["hostname"] in conf.admin[info["sender"]] :
+                                self.plugins[args[0]].main(*arguments)
+                            else : self.ircsend(info["channel"], "%s: You do not have enough permissions to use that command!" % (info["sender"]))
+                        else : self.plugins[args[0]].main(*arguments)
+                    else : self.ircsend(info["channel"], "That plugin is not enabled in this channel.  To enable it, use ;enable %s" % (args[0]))
                 except: 
                     traceback.print_exc()
                     self.ircsend(info["channel"], "Error.  The syntax for that command is: %s" % (eval("self.plugins['%s'].helpstring" % (args[0]))))
@@ -490,7 +527,7 @@ class sonicbot :
                 else : self.rawsend("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)))
                 if line.startswith("\x01ACTION") : self.logwrite(targ_channel, "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, " ".join(part.split(" ")[1:]).replace("\x01", "")))
                 else : self.logwrite(targ_channel, "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, self.ircfilter(part, conf.bads)))
-
+                time.sleep(.2)
 
         
     def logwrite(self, channel, log) :
