@@ -307,7 +307,7 @@ class sonicbot :
                 self.chanmodes[info["words"][4]][newnick] = []
                 for mode in ["!", "%", "@", "&", "~", "+"] :
                     if mode in correctnick :
-                        self.chanmodes[info["words"][4]][newnick].append(mode)
+                        self.chanmodes[info["words"][4].lower()][newnick].append(mode)
                 correctnick = newnick
                 self.channels[info["words"][4].lower()].append(correctnick)
         if "on_353" in self.plugins["pluginlist"].eventlist :
