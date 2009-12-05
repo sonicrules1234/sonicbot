@@ -323,6 +323,8 @@ class sonicbot :
             if info["sender"] in self.channels[channel] :
                 self.channels[channel].remove(info["sender"])
                 self.channels[channel].append(newnick)
+                self.chanmodes[channel][newnick] = self.chanmodes[channel][info["sender"]]
+                del self.chanmodes[channel][info["sender"]]
                 self.logwrite(channel, "[%s] **%s is now known as %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], newnick))
         if "on_NICK" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_NICK"].main(self, info, conf)
