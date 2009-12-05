@@ -300,14 +300,15 @@ class sonicbot :
                 if letter == "+" : modetype = True
                 elif letter == "-" : modetype = False
                 else :
-                    print self.host
-                    if modetype :
-                        if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                            self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
-                    elif not modetype :
-                        if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                            self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
-                    recvr += 1
+                    if letter in modesymbols.keys() :
+                        print self.host
+                        if modetype :
+                            if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
+                        elif not modetype :
+                            if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
+                        recvr += 1
         else :
             self.logwrite(conf.nick, "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, info["channel"]))
         if "on_MODE" in self.plugins["pluginlist"].eventlist :
