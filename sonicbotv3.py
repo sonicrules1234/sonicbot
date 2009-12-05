@@ -84,6 +84,7 @@ class sonicbot :
         if not self.users.has_key("channels") :
             self.users["channels"] = {}
             self.users.sync()
+        self.timer = 0
         self.startLoop()
 
     def start(self, host, port) :
@@ -156,19 +157,26 @@ class sonicbot :
             self.sock.send(msg_out)
         if conf.debug : print "[OUT]%s" % (msg_out)
     def startLoop(self) :
-        data = True
-        while data :
+        socketerror = False
+        while not socketerror :
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-                data = self.sock.read()
-                if data : thread.start_new_thread(self.dataReceived, (data,))
+                try :
+                    data = self.sock.read()
+                    socketerror = False
+                except : socketerror = True
+                if not socketerror :
+                    self.dataReceived(data)
             else :
-                data = self.sock.recv(4096)
-                if data : thread.start_new_thread(self.dataReceived, (data,))
+                try :
+                    data = self.sock.recv(4096)
+                except : socketerror = True
+                if not socketerror : self.dataReceived(data)
         print "connection lost"
         self.logf.close()
         for channel in self.channels :
             self.logs[channel].close()
         del world.connections[self.host]
+        print repr(world.connections)
         conf.ports.pop(conf.hosts.index(self.host))
         conf.ssl.pop(conf.hosts.index(self.host))
         conf.hosts.remove(self.host)
@@ -266,7 +274,7 @@ class sonicbot :
                 if letter == "+" : modetype = True
                 elif letter == "-" : modetype = False
                 else :
-                    
+                    print self.host
                     if modetype :
                         if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
                             self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
@@ -305,6 +313,7 @@ class sonicbot :
                 for mode in ["!", "%", "@", "&", "~", "+"] :
                     newnick = newnick.replace(mode, "")
                 self.chanmodes[info["words"][4].lower()][newnick] = []
+                if newnick == conf.nick : print "Yep", newnick, self.host
                 for mode in ["!", "%", "@", "&", "~", "+"] :
                     if mode in correctnick :
                         self.chanmodes[info["words"][4].lower()][newnick].append(mode)
@@ -508,6 +517,9 @@ class sonicbot :
             string = string.replace(bad, "")
         return string
 
+    def threadedrawsend(self, msg_out, timer) :
+        time.sleep(timer)
+        if self.host in world.connections.keys() : self.rawsend(msg_out)
     def ircsend(self, targ_channel, msg_out) :
         for line in msg_out.split("\n") :
             length = len("PRIVMSG %s :\n" % (targ_channel))
@@ -522,13 +534,17 @@ class sonicbot :
             if current != "" :
                 parts.append(current)
             for part in parts :
-                
-                if targ_channel.startswith("#") or targ_channel.lower().endswith("serv") : self.rawsend("PRIVMSG %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)))
-                else : self.rawsend("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)))
+                now = time.time()
+                if now > self.timer :
+                    self.timer = now + .8
+                else : self.timer += .8
+                extra = self.timer - now
+                if targ_channel.startswith("#") or targ_channel.lower().endswith("serv") : thread.start_new_thread(self.threadedrawsend, ("PRIVMSG %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)), extra))
+                else : thread.start_new_thread(self.threadedrawsend, ("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)), extra))
                 if line.startswith("\x01ACTION") : self.logwrite(targ_channel, "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, " ".join(part.split(" ")[1:]).replace("\x01", "")))
                 else : self.logwrite(targ_channel, "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, self.ircfilter(part, conf.bads)))
-                time.sleep(.2)
-
+            
+    
         
     def logwrite(self, channel, log) :
         if channel in self.channels :
