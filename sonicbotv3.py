@@ -251,6 +251,7 @@ class sonicbot :
                     self.users["channels"][info["channel"]]["enabled"].append(plugin)
                     self.users.sync()
         else : self.channels[info["channel"]].append(info["sender"])
+        self.chanmodes[info["channel"]][info["sender"]] = []
         self.logwrite(info["channel"], "[%s] ***%s has joined %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
         if "on_JOIN" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_JOIN"].main(self, info, conf)
