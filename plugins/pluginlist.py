@@ -13,4 +13,4 @@ for plugin in glob.glob("plugins/*.py") :
 
 
 def main(connection, info, args) :
-    connection.ircsend(info["channel"], "The available plugins are %s" % (", ".join(pluginlist)))
+    connection.ircsend(info["channel"], "The available plugins are %s" % (", ".join([x for x in pluginlist if x in connection.users["channels"][info["channel"]]["enabled"]])))

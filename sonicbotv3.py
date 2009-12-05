@@ -56,8 +56,12 @@ class sonicbot :
                 world.hostcount += 1
                 new = sonicbot()
                 thread.start_new_thread(new.start, (conf.hosts[world.hostcount], conf.ports[world.hostcount]))
-        except : traceback.print_exc()
-        print "Connected"
+        except :
+            errorlog = open("errorlog.txt", "a")
+            errorlog.write(traceback.format_exc() + "\n")
+            errorlog.close()
+            traceback.print_exc()
+        print "Connected to", self.host
         self.logf = open("raw.txt", "a")
         if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
         self.factoids = shelve.open("factoids.db")
@@ -99,7 +103,11 @@ class sonicbot :
             if conf.ssl[conf.hosts.index(self.host)] :
                 if world.pythonversion == "2.6" :
                     self.sock = ssl.wrap_socket(self.sock)
-        except : traceback.print_exc()
+        except :
+            errorlog = open("errorlog.txt", "a")
+            errorlog.write(traceback.format_exc() + "\n")
+            errorlog.close()
+            traceback.print_exc()
         self.connect()
 
     def dataReceived(self, data):
@@ -197,6 +205,23 @@ class sonicbot :
         self.rawsend("NOTICE %s :VERSION SonicBot version 3.1.2\n" % (info["sender"]))
 
     def on_PRIVMSG(self, info) :
+        if not info["channel"].startswith("#") :
+            if info["channel"] in self.users["channels"] :
+                if self.users["channels"][info["channel"]]["registered"] :
+                    pass
+                else :
+                    self.users["channels"][info["channel"]]["enabled"] = []
+                    self.users.sync()
+                    for plugin in self.plugins["pluginlist"].pluginlist :
+                        self.users["channels"][info["channel"]]["enabled"].append(plugin)
+                        self.users.sync()
+            else :
+                self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
+
+                self.users.sync()
+                for plugin in self.plugins["pluginlist"].pluginlist :
+                    self.users["channels"][info["channel"]]["enabled"].append(plugin)
+                    self.users.sync()
         if info["channel"] in self.channels : self.logwrite(info["channel"], "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["message"]))
         if not info["message"]: return
         if info["message"][0] == conf.prefix or info["message"].split(" ")[0] == conf.nick + ":" :
