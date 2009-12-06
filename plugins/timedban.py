@@ -7,7 +7,7 @@ def main(connection, info, args) :
         target = "*!*@%s" % (connection.nicks[args[1]])
     else : target = "%s*!*@*" % (args[1])
     connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
-    thread.start_new_thread(unban, (connection,"MODE %s +b %s\n" % (info["channel"], target), int(args[2]) * 60))
+    thread.start_new_thread(unban, (connection,"MODE %s -b %s\n" % (info["channel"], target), int(args[2]) * 60))
 def unban(connection, msg, timer) :
     time.sleep(timer)
     connection.rawsend(msg)
