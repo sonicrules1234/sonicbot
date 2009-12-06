@@ -1,6 +1,6 @@
 import shelve, time, random, string, hashlib
 arguments = ["self", "info", "args", "conf"]
-needop = True
+minlevel = 4
 helpstring = "mailman <command> <message/nick>"
 
 def main(connection, info, args, conf) :

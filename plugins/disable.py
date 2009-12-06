@@ -1,5 +1,5 @@
 arguments = ["self", "info", "args"]
-needop = True
+minlevel = 3
 helpstring = "disable <plugin>"
 
 def main(connection, info, args) :

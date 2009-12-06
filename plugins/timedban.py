@@ -1,6 +1,6 @@
 arguments = ["self", "info", "args", "reactor"]
 helpstring = "timedban <nick> <minutes>"
-needop = True
+minlevel = 3
 def main(connection, info, args, reactor) :
     if args[1] in connection.nicks.keys() :
         target = "*!*@%s" % (connection.nicks[args[1]])

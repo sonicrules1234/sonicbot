@@ -1,6 +1,6 @@
 import random
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "choose <choices seperated by ' or '>"
 
 def main(connection, info, args) :

@@ -1,7 +1,7 @@
 import glob
 helpstring = "pluginlist"
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 pluginlist = []
 eventlist = []
 for plugin in glob.glob("plugins/*.py") :

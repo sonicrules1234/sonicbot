@@ -1,6 +1,6 @@
 import re, urllib2
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "title <url>"
 
 def main(connection, info, args) :

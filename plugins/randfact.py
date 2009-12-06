@@ -1,7 +1,7 @@
 import re, urllib2
 arguments = ["self", "info", "args"]
 helpstring = "randfact"
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :
     source = urllib2.urlopen("http://randomfunfacts.com/").read()

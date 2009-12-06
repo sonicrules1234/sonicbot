@@ -1,6 +1,6 @@
 helpstring = "help <plugin>"
 arguments = ["self", "self.plugins", "args", "info", "conf"]
-needop = False
+minlevel = 1
 def main(connection, plugs, args, info, conf) :
     if " " not in info["message"] :
         connection.ircsend(info["channel"], "This bot's prefix is %s  The following is a list of available commands:" % (conf.prefix))

@@ -1,6 +1,6 @@
 import time, shelve
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "points [nick] [+/-number] or points [+/-]list or points -flush"
 
 def main(connection, info, args) :

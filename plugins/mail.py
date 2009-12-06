@@ -1,7 +1,7 @@
 import shelve, time
 arguments = ["self", "info", "args"]
 helpstring = "mail <nick> <message>"
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :
     mail = shelve.open("mail.db", writeback=True)

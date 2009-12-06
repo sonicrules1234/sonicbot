@@ -1,6 +1,6 @@
 import shelve, time
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "mcheck <command> [nick] [number]"
 
 def main(connection, info, args) :

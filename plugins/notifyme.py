@@ -1,7 +1,7 @@
 import shelve
 helpstring = "notifyme <nick>"
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :
     args = [x.lower() for x in args]

@@ -1,7 +1,7 @@
 import random
 arguments = ["self", "info", "args"]
 helpstring = "roulette"
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :
     prob = [2, 3]

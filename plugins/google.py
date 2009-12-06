@@ -1,7 +1,7 @@
 import urllib, urllib2, re
 arguments = ["self", "info", "args"]
 helpstring = "google <result #> <query>"
-needop = False
+minlevel = 1
 def main(connection, info, args) :
     if args[1].isdigit() :
         params = urllib.urlencode({'start' : args[1], 'q': " ".join(args[2:])})

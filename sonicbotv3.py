@@ -62,33 +62,40 @@ class sonicbot :
             errorlog.close()
             traceback.print_exc()
         print "Connected to", self.host
-        self.logf = open("raw.txt", "a")
-        if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
-        self.factoids = shelve.open("factoids.db")
-        self.channels = {}
-        self.logs = {}
-        self.logs[conf.nick] = open("logs/PMs.txt", "a")
-        if conf.ai :
-            self.ai = aiml.Kernel()
-            self.ai.learn("std-startup.xml")
-            self.ai.setBotPredicate("name", conf.nick)
-            self.ai.setBotPredicate("master", conf.owner)
-            self.ai.setBotPredicate("gender", "male")
-            self.ai.respond("load aiml b")
-        self.nicks = {}
-        self.buffer = ""
-        self.chanmodes = {}
-        self.users = shelve.open("users-%s.db" % (world.hostnicks[self.host]), writeback=True)
-        if not self.users.has_key("users") :
-            for admin in conf.admin.keys() :
-                self.users[admin] = {"userlevel":4, "hostnames":conf.admin[admin]}
+        try :
+            self.logf = open("raw.txt", "a")
+            if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
+            self.factoids = shelve.open("factoids.db")
+            self.channels = {}
+            self.logs = {}
+            self.logs[conf.nick] = open("logs/PMs.txt", "a")
+            if conf.ai :
+                self.ai = aiml.Kernel()
+                self.ai.learn("std-startup.xml")
+                self.ai.setBotPredicate("name", conf.nick)
+                self.ai.setBotPredicate("master", conf.owner)
+                self.ai.setBotPredicate("gender", "male")
+                self.ai.respond("load aiml b")
+            self.nicks = {}
+            self.buffer = ""
+            self.chanmodes = {}
+            self.users = shelve.open("users-%s.db" % (world.hostnicks[self.host]), writeback=True)
+            if not self.users.has_key("users") :
+                self.users["users"] = {}
                 self.users.sync()
-            self.users[conf.owner]["userlevel"] = 5
-            self.users.sync()
-        if not self.users.has_key("channels") :
-            self.users["channels"] = {}
-            self.users.sync()
-        self.timer = 0
+                for admin in conf.admin.keys() :
+                    self.users["users"][admin] = {"userlevel":4, "hostname":conf.admin[admin]}
+                    self.users.sync()
+                self.users["users"][conf.owner]["userlevel"] = 5
+                self.users.sync()
+            if not self.users.has_key("channels") :
+                self.users["channels"] = {}
+                self.users.sync()
+            if not self.users.has_key("hostignores") :
+                self.users["hostignores"] = []
+                self.users.sync()
+            self.timer = 0
+        except : traceback.print_exc()
         self.startLoop()
 
     def start(self, host, port) :
@@ -202,7 +209,7 @@ class sonicbot :
             self.plugins["on_TIME"].main(self, info, conf)
 
     def on_VERSION(self, info) :
-        self.rawsend("NOTICE %s :VERSION SonicBot version 3.1.2\n" % (info["sender"]))
+        self.rawsend("NOTICE %s :VERSION SonicBot version 3.2.0\n" % (info["sender"]))
 
     def on_PRIVMSG(self, info) :
         if not info["channel"].startswith("#") :
@@ -529,11 +536,9 @@ class sonicbot :
                 try :
                     arguments = eval(", ".join(self.plugins[args[0]].arguments))
                     if args[0] in self.users["channels"][info["channel"]]["enabled"] :
-                        if self.plugins[args[0]].needop :
-                            if info["sender"] in conf.admin and info["hostname"] in conf.admin[info["sender"]] :
-                                self.plugins[args[0]].main(*arguments)
-                            else : self.ircsend(info["channel"], "%s: You do not have enough permissions to use that command!" % (info["sender"]))
-                        else : self.plugins[args[0]].main(*arguments)
+                        if self.auth(info, self.plugins[args[0]].minlevel) :
+                            self.plugins[args[0]].main(*arguments)
+                        else : self.ircsend(info["channel"], "%s: You do not have a high enough user level and/or privleges in this channel to use that command!" % (info["sender"]))
                     else : self.ircsend(info["channel"], "That plugin is not enabled in this channel.  To enable it, use ;enable %s" % (args[0]))
                 except: 
                     traceback.print_exc()
@@ -545,6 +550,29 @@ class sonicbot :
         for bad in bads :
             string = string.replace(bad, "")
         return string
+
+    def auth(self, info, minlevel) :
+        if info["sender"] not in self.users["users"].keys() :
+            self.users["users"][info["sender"]] = {"hostname":[self.nicks[info["sender"]]], "userlevel":1}
+            self.users.sync()
+        else :
+            if self.users["users"][info["sender"]]["userlevel"] in [0, 1] :
+                self.users["users"][info["sender"]]["hostname"].append(self.nicks[info["sender"]])
+                self.users.sync()
+            if info["hostname"] in self.users["users"][info["sender"]]["hostname"] :
+                if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
+                    if minlevel != 3 : return True
+                    else :
+                        if self.users["users"][info["sender"]].has_key("channels") :
+                            if info["channel"] in self.users["users"][info["sender"]]["channels"] :
+                                return True
+                            else : return False
+                        else : return False
+                else : return False
+            else :
+                self.ircsend(info["sender"], "Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command.")
+                return False
+                        
 
     def threadedrawsend(self, msg_out, timer) :
         time.sleep(timer)

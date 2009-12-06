@@ -1,5 +1,5 @@
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "gdefine <phrase>"
 
 def main(connection, info, args) :

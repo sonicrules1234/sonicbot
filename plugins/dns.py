@@ -1,7 +1,7 @@
 import commands
 arguments = ["self", "info", "args"]
 helpstring = "dns <IP or domain name>"
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :    
     connection.ircsend(info["channel"], lookup(args[1]))

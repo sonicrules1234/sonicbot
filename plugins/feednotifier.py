@@ -1,7 +1,7 @@
 import feedparser, shelve, time
 arguments = ["self", "info", "args", "conf", "world", "thread"]
 helpstring = "feednotifier <feed url>"
-needop = True
+minlevel = 3
 
 def main(connection, info, args, conf, world, thread) :
     feedurl = args[1]

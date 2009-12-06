@@ -1,6 +1,6 @@
 import time
 arguments = ["self", "info", "args"]
-needop = False
+minlevel = 1
 helpstring = "bday <MM/DD/YYYY>"
 def main(connection, info, args) :
     birthd = args[1]

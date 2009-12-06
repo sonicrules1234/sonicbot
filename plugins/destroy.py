@@ -1,6 +1,6 @@
 arguments = ["self", "info", "args", "conf"]
 helpstring = "destroy <multiple>"
-needop = True
+minlevel = 3
 
 def main(connection, info, args, conf) :
     count = 0

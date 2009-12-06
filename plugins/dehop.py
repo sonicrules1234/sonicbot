@@ -1,5 +1,5 @@
 arguments = ["self", "info", "args", "conf"]
-needop = True
+minlevel = 3
 helpstring = "dehop [nick]"
 
 def main(connection, info, args, conf) :

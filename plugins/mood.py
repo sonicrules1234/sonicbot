@@ -2,7 +2,7 @@ from __future__ import division
 import shelve
 arguments = ["self", "info", "args"]
 helpstring = "mood <nick>"
-needop = False
+minlevel = 1
 
 def main(connection, info, args) :
     emotions = shelve.open("emotions.db")

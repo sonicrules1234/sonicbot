@@ -1,6 +1,6 @@
 import random, random
 arguments = ["self", "info", "args", "conf"]
-needop = False
+minlevel = 1
 helpstring = "violence <nick>"
 verbs = ["slaps", "kicks", "barfs on", "punches", "force feeds", "squishes", "stomps on", "bodyslams", "shoots", "smacks", "compresses", "crunches"]
 adjectives = ["sweet", "dirty", "corny", "ugly", "magical", "smelly", "gross old", "old", "tasty", "messy", "blue", "red", "yellow", "pink", "purple", "green", "classic", "stinky"]

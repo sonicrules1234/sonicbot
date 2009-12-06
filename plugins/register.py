@@ -1,6 +1,6 @@
 import shelve, time, hashlib, random, string
 arguments = ["self", "info", "args", "conf"]
-needop = True
+minlevel = 4
 helpstring = "register <nick>"
 def main(connection, info, args, conf) :
     mail = shelve.open("mail.db")

@@ -1,6 +1,6 @@
 helpstring = "ban <nick>"
 arguments = ["self", "info", "args"]
-needop = True
+minlevel = 3
 def main(connection, info, args) :
     if args[1] in connection.nicks.keys() :
         target = "*!*@%s" % (connection.nicks[args[1]])

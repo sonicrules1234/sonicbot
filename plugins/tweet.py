@@ -2,7 +2,7 @@ import twitter
 
 arguments = ["self", "info", "args", "conf"]
 helpstring = "tweet <message>"
-needop = False
+minlevel = 2
 
 def main(connection, info, args, conf) :
     api = twitter.Api(username=conf.twituser, password=conf.twitpass)
