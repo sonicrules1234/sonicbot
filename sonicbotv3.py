@@ -555,23 +555,22 @@ class sonicbot :
         if info["sender"] not in self.users["users"].keys() :
             self.users["users"][info["sender"]] = {"hostname":[self.nicks[info["sender"]]], "userlevel":1}
             self.users.sync()
-        else :
-            if self.users["users"][info["sender"]]["userlevel"] in [0, 1] :
-                self.users["users"][info["sender"]]["hostname"].append(self.nicks[info["sender"]])
-                self.users.sync()
-            if info["hostname"] in self.users["users"][info["sender"]]["hostname"] :
-                if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
-                    if minlevel != 3 : return True
-                    else :
-                        if self.users["users"][info["sender"]].has_key("channels") :
-                            if info["channel"] in self.users["users"][info["sender"]]["channels"] :
-                                return True
-                            else : return False
+        if self.users["users"][info["sender"]]["userlevel"] in [0, 1] :
+            self.users["users"][info["sender"]]["hostname"].append(self.nicks[info["sender"]])
+            self.users.sync()
+        if info["hostname"] in self.users["users"][info["sender"]]["hostname"] :
+            if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
+                if minlevel != 3 : return True
+                else :
+                    if self.users["users"][info["sender"]].has_key("channels") :
+                        if info["channel"] in self.users["users"][info["sender"]]["channels"] :
+                            return True
                         else : return False
-                else : return False
-            else :
-                self.ircsend(info["sender"], "Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command.")
-                return False
+                    else : return False
+            else : return False
+        else :
+            self.ircsend(info["sender"], "Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command.")
+            return False
                         
 
     def threadedrawsend(self, msg_out, timer) :
