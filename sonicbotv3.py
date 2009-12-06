@@ -209,7 +209,7 @@ class sonicbot :
             self.plugins["on_TIME"].main(self, info, conf)
 
     def on_VERSION(self, info) :
-        self.rawsend("NOTICE %s :VERSION SonicBot version 3.2.0\n" % (info["sender"]))
+        self.rawsend("NOTICE %s :VERSION SonicBot version 3.3.0\n" % (info["sender"]))
 
     def on_PRIVMSG(self, info) :
         if not info["channel"].startswith("#") :
