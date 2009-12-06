@@ -1,8 +1,8 @@
 import thread, time
-arguments = ["self", "info", "args", "reactor"]
+arguments = ["self", "info", "args"]
 helpstring = "timedban <nick> <minutes>"
 minlevel = 3
-def main(connection, info, args, reactor) :
+def main(connection, info, args) :
     if args[1] in connection.nicks.keys() :
         target = "*!*@%s" % (connection.nicks[args[1]])
     else : target = "%s*!*@*" % (args[1])
