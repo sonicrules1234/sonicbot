@@ -1,3 +1,4 @@
+import thread, time
 arguments = ["self", "info", "args", "reactor"]
 helpstring = "timedban <nick> <minutes>"
 minlevel = 3
@@ -6,6 +7,7 @@ def main(connection, info, args, reactor) :
         target = "*!*@%s" % (connection.nicks[args[1]])
     else : target = "%s*!*@*" % (args[1])
     connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
-    reactor.callLater(int(args[2]) * 60, unban, [connection,"MODE %s +b %s\n" % (info["channel"], target)])
-def unban(infolist) :
-    infolist[0].rawsend(infolist[1])
+    thread.start_new_thread(unban, (connection,"MODE %s +b %s\n" % (info["channel"], target), int(args[2]) * 60))
+def unban(connection, msg, timer) :
+    time.sleep(timer)
+    connection.rawsend(msg)
