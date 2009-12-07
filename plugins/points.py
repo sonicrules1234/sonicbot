@@ -105,7 +105,7 @@ def compare(points, user1, user2) :
     if points["users"][user1]["points"] == points["users"][user2]["points"] :
         return "it is a tie"
     elif points["users"][user1]["points"] > points["users"][user2]["points"] :
-        return "%s has %s more points over %s" % (user1, user2, str(points["users"][user1]["points"] - points["users"][user2]["points"]))
+        return "%s has %s more points over %s" % (user1, str(points["users"][user1]["points"] - points["users"][user2]["points"]), user2)
     elif points["users"][user1]["points"] > points["users"][user2]["points"] :
-        return "%s has %s more points over %s" % (user2, user1, str(points["users"][user2]["points"] - points["users"][user1]["points"]))
+        return "%s has %s more points over %s" % (user2, str(points["users"][user2]["points"] - points["users"][user1]["points"]), user1)
     
