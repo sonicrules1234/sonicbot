@@ -79,8 +79,8 @@ def main(connection, info, args) :
                 if args[3].lower() not in points["users"].keys() :
                     points["users"][args[3].lower()] = {"points":0, "outward":{}}
                     points.sync()
-                connection.ircsend(info["channel"], "%s has % point(s) while %s has %s point(s).  This means %s" (args[2].lower(), str(points["users"][args[2].lower()]["points"]), args[3].lower(), str(points["users"][args[3].lower()]["points"]), compare(points, args[2].lower(), args[3].lower())))
-            elif args[1].endswith("ignore") :
+                connection.ircsend(info["channel"], "%s has % point(s) while %s has %s point(s).  This means %s" % (args[2].lower(), str(points["users"][args[2].lower()]["points"]), args[3].lower(), str(points["users"][args[3].lower()]["points"]), compare(points, args[2].lower(), args[3].lower())))
+            elif args[1].endswith("ignore") and connection.auth(info, 4) :
                 if args[2].lower() not in points["ignored"]["nicks"] :
                     points["ignored"]["nicks"].append(args[2].lower())
                     points.sync()
