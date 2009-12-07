@@ -104,7 +104,7 @@ def main(connection, info, args) :
         connection.ircsend(info["channel"], "%s: You have %s point(s)." % (info["sender"], str(points["users"][info["sender"].lower()]["points"])))
     points.close()
 
-def verify(sender) :
+def verify(sender, points) :
     history = [points["users"][sender]["outward"][x] for x in points["users"][sender]["outward"].keys()]
     history.sort()
     if len(history) in [0, 1] :
