@@ -81,14 +81,25 @@ def main(connection, info, args) :
                     points.sync()
                 connection.ircsend(info["channel"], "%s has %s point(s) while %s has %s point(s).  This means %s" % (args[2].lower(), str(points["users"][args[2].lower()]["points"]), args[3].lower(), str(points["users"][args[3].lower()]["points"]), compare(points, args[2].lower(), args[3].lower())))
             elif args[1].endswith("ignore") and connection.auth(info, 4) :
-                if args[2].lower() not in points["ignored"]["nicks"] :
-                    points["ignored"]["nicks"].append(args[2].lower())
-                    points.sync()
-                if args[2] in connection.nicks.keys() :
-                    if connection.nicks[args[2]] not in points["ignored"]["hostnames"] :
-                        points["ignored"]["hostnames"].append(connection.nicks[args[2]])
+                if args[1].startswith("+") :
+                    if args[2].lower() not in points["ignored"]["nicks"] :
+                        points["ignored"]["nicks"].append(args[2].lower())
                         points.sync()
-                connection.ircsend(info["channel"], "%s will now be ignored" % (args[2]))
+                    if args[2] in connection.nicks.keys() :
+                        if connection.nicks[args[2]] not in points["ignored"]["hostnames"] :
+                            points["ignored"]["hostnames"].append(connection.nicks[args[2]])
+                            points.sync()
+                    connection.ircsend(info["channel"], "%s will now be ignored" % (args[2]))
+                elif args[1].startswith("-") :
+                    if args[2].lower() in points["ignored"]["nicks"] :
+                        points["ignored"]["nicks"].remove(args[2].lower())
+                        points.sync()
+                    if args[2] in connection.nicks.keys() :
+                        if connection.nicks[args[2]] in points["ignored"]["hostnames"] :
+                            points["ignored"]["hostnames"].remove(connection.nicks[args[2]])
+                            points.sync()
+                    connection.ircsend(info["channel"], "%s will no longer be ignored" % (args[2]))
+
     else :
         connection.ircsend(info["channel"], "%s: You have %s point(s)." % (info["sender"], str(points["users"][info["sender"].lower()]["points"])))
     points.close()
@@ -105,7 +116,7 @@ def compare(points, user1, user2) :
     if points["users"][user1]["points"] == points["users"][user2]["points"] :
         return "it is a tie"
     elif points["users"][user1]["points"] > points["users"][user2]["points"] :
-        return "%s has %s more points over %s" % (user1, str(points["users"][user1]["points"] - points["users"][user2]["points"]), user2)
+        return "%s has %s more point(s) over %s" % (user1, str(points["users"][user1]["points"] - points["users"][user2]["points"]), user2)
     elif points["users"][user1]["points"] > points["users"][user2]["points"] :
-        return "%s has %s more points over %s" % (user2, str(points["users"][user2]["points"] - points["users"][user1]["points"]), user1)
+        return "%s has %s more point(s) over %s" % (user2, str(points["users"][user2]["points"] - points["users"][user1]["points"]), user1)
     
