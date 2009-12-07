@@ -21,6 +21,6 @@ def main(connection, info, args) :
 
 def auth(connection, info) :
     for mode in connection.chanmodes[info["channel"]][info["sender"]] :
-        if mode in ["!", "~", "@", "%"] :
+        if mode in ["!", "~", "@", "%", "&"] :
             return True
     return False
