@@ -42,7 +42,7 @@ def main(connection, info, args) :
                             connection.ircsend(info["channel"], "%s: You have lost 5 points in the proccess of taking points from others" % (info["sender"]))
                         points["users"][info["sender"].lower()]["outward"][args[1].lower()] = time.time() + (60*60*24)
                         points.sync()
-                        connection.ircsend(info["channel"], "%s: You have %s %s point(s) %s %s" % (info["sender"], givetake[0], str(sendpoints)[1:], givetake[1], args[1]))
+                        connection.ircsend(info["channel"], "%s: You have %s %s point(s) %s %s" % (info["sender"], givetake[0], str(abs(sendpoints)), givetake[1], args[1]))
                         if args[1].lower() not in points["userlist"] : points["userlist"].append(args[1].lower())
                     else :
                         connection.ircsend(info["channel"], "%s: %s has %s point(s)." % (info["sender"], args[1], str(points["users"][args[1].lower()]["points"])))
