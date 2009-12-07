@@ -555,7 +555,7 @@ class sonicbot :
         if info["sender"] not in self.users["users"].keys() :
             self.users["users"][info["sender"]] = {"hostname":[self.nicks[info["sender"]]], "userlevel":1}
             self.users.sync()
-        if self.users["users"][info["sender"]]["userlevel"] in [0, 1] and self.nicks[info["sender"]] in self.users["users"][info["sender"]]["hostname"]:
+        if self.users["users"][info["sender"]]["userlevel"] in [0, 1] and self.nicks[info["sender"]] not in self.users["users"][info["sender"]]["hostname"]:
             self.users["users"][info["sender"]]["hostname"].append(self.nicks[info["sender"]])
             self.users.sync()
         if info["hostname"] in self.users["users"][info["sender"]]["hostname"] :
