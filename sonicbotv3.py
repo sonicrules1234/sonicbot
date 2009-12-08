@@ -199,7 +199,7 @@ class sonicbot :
         del world.connections[self.host]
         world.hostcount -= 1
         print repr(world.connections)
-        if conf.autoreconnect[self.host] :
+        if self.host in conf.autoreconnect :
             newsonicbot = sonicbot()
             thread.start_new_thread(newsonicbot.start, (self.host, self.port))
         else :
