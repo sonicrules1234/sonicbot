@@ -10,5 +10,6 @@ def main(connection, info, args, world, conf) :
         reports.sync()
     reports["reports"].append({"priority":args[3], "time":time.time(), "reporter":[info["sender"].lower(), connection.nicks[info["sender"]]], "channel":args[2], "accused":args[1].lower(), "reason":" ".join(args[4:]), "password":"".join([random.choice(string.ascii_lowercase+string.ascii_uppercase) for x in range(6)]), "id":len(reports["reports"]), "status":"reported", "assigned":[], "response":{}})
     reports.sync()
-    connection.ircsend(conf.staffchannel[connection.host], "%s has reported %s in %s with the reason '%s' and a priority level of %s.  This report's ID is %s." % (reports["reports"][-1]["reporter"], reports["reports"][-1]["accused"], reports["reports"][-1]["channel"], reports["reports"][-1]["reason"], reports["reports"][-1]["priority"], reports["reports"][-1]["id"]))
+    connection.ircsend(info["sender"], "The incident has been reported")
+    connection.ircsend(conf.staffchannel[connection.host], "%s has reported %s in %s with the reason '%s' and a priority level of %s.  This report's ID is %s." % (reports["reports"][-1]["reporter"][0], reports["reports"][-1]["accused"], reports["reports"][-1]["channel"], reports["reports"][-1]["reason"], reports["reports"][-1]["priority"], reports["reports"][-1]["id"]))
     reports.close()
