@@ -173,31 +173,40 @@ class sonicbot :
         if conf.debug : print "[OUT]%s" % (msg_out)
     def startLoop(self) :
         socketerror = False
-        while not socketerror :
+        data = True
+        while data and not socketerror :
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
                 try :
                     data = self.sock.read()
                     socketerror = False
-                except : socketerror = True
-                if not socketerror :
+                except :
+                    socketerror = True
+                    data = False
+                if data and not socketerror :
                     self.dataReceived(data)
             else :
                 try :
                     data = self.sock.recv(4096)
-                except : socketerror = True
-                if not socketerror : self.dataReceived(data)
-        print "connection lost"
+                except :
+                    socketerror = True
+                    data = False
+                if data and not socketerror : self.dataReceived(data)
+        print "connection to %s lost" % (self.host)
         self.logf.close()
+        self.sock.close()
         for channel in self.channels :
             self.logs[channel].close()
         del world.connections[self.host]
-        print repr(world.connections)
-        conf.ports.pop(conf.hosts.index(self.host))
-        conf.ssl.pop(conf.hosts.index(self.host))
-        conf.hosts.remove(self.host)
-        del conf.channels[self.host]
         world.hostcount -= 1
-        self.sock.close()
+        print repr(world.connections)
+        if conf.autoreconnect[self.host] :
+            newsonicbot = sonicbot()
+            thread.start_new_thread(newsonicbot.start, (self.host, self.port))
+        else :
+            conf.ports.pop(conf.hosts.index(self.host))
+            conf.ssl.pop(conf.hosts.index(self.host))
+            conf.hosts.remove(self.host)
+            del conf.channels[self.host]
     def on_ACTION(self, info, args) :
         self.logwrite(info["channel"], "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], " ".join(args[1:]).replace("", "")))
         if not conf.debug : "[%s] *%s %s\n" % (time.strftime("%H:%M:%S"), info["sender"], " ".join(args[1:]).replace("", ""))
