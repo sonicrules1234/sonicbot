@@ -1,3 +1,4 @@
+import shelve
 arguments = ["self", "info", "args", "conf", "world"]
 helpstring = "rsetstatus <id> <status>"
 minlevel = 4
