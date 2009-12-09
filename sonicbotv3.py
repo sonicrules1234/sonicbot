@@ -174,7 +174,7 @@ class sonicbot :
             if conf.debug : print "[OUT]%s" % (msg_out)
         except :
             print "Connection lost to", self.host
-        self.cleanup()
+            self.cleanup()
     def startLoop(self) :
         socketerror = False
         data = True
