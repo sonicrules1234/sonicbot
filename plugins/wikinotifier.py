@@ -4,28 +4,43 @@ helpstring = "wikinotifier <feed url>"
 minlevel = 4
 
 def main(connection, info, args, conf, world, thread) :
-    feedurl = args[1]
-    if len(args) == 2 :
-        feeds = shelve.open("feeds.db", writeback=True)
+    feedurl = args[-2]
+    onoff = args[-1]
+    title = args[1:-3]
+    if onoff == "on" :
+        feeds = shelve.open("feeds-%s.db" % (world.hostnicks[connection.host]), writeback=True)
         feeds[feedurl] = {}
         feeds.sync()
         feeds[feedurl]["updated"] = 0
         feeds.sync()
         feeds.close()
-        
-        world.feeds[feedurl] = True
-        thread.start_new_thread(get_feed, (connection, info, args, args[1], world))
-    elif len(args) == 3 :
-        if feedurl in world.feeds :
-            if args[2] == "off" :
-                world.feeds[feedurl] = False
+        if not world.feeds.has_key(connection.host) :
+            world.feeds[connection.host] = {}
+        if not world[connection.host].feeds.has_key(info["channel"]) :
+            world.feeds[connection.host][info["channel"]] = {}
+        if not world.feeds[connection.host][info["channel"]].has_key(feedurl) :
+            world.feeds[connection.host][info["channel"]][feedurl] = []
+        if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
+            world.feeds[info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[info["channel"]][feedurl]) - 1
+            world.feeds[feedurl] = True
+            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+        elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
+            world.feeds[info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[info["channel"]][feedurl]) - 1
+            world.feeds[feedurl] = True
+            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+        else : connection.ircsend(info["channel"], "That feed is already being tracked.")
+    elif onoff == "off" :
+        if feedurl in world.feeds[info["channel"]].keys() :
+                world.feeds[connection.host][info["channel"]][feedurl][-1] = False
                 connection.ircsend(info["channel"], "Stopped tracking feed at %s" % (feedurl))
         else : connection.ircsend(info["channel"], "No such feed being tracked.")
 
-def get_feed(connection, info, args, feedurl, world) :
-    while world.feeds[feedurl] :
+def get_feed(connection, info, args, feedurl, world, indexnum, title) :
+    while world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
         feed = feedparser.parse(feedurl)
-        feeds = shelve.open("feeds.db", writeback=True)
+        feeds = shelve.open("feeds-%s.db" % (world.hostnicks[connection.host]), writeback=True)
         print "Checking feed"
         print "Recorded = %s ; Feed = %s" % (feeds[feedurl]["updated"], feed["items"][0]["date"])
         if feed["items"][0]["date"] != feeds[feedurl]["updated"] and feeds[feedurl]["updated"] != 0 :
