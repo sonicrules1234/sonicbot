@@ -110,12 +110,13 @@ class sonicbot :
             if conf.ssl[conf.hosts.index(self.host)] :
                 if world.pythonversion == "2.6" :
                     self.sock = ssl.wrap_socket(self.sock)
+            self.connect()
         except :
             errorlog = open("errorlog.txt", "a")
             errorlog.write(traceback.format_exc() + "\n")
             errorlog.close()
             traceback.print_exc()
-        self.connect()
+        
 
     def dataReceived(self, data):
         if conf.debug :
