@@ -205,7 +205,7 @@ class sonicbot :
         if "channels" in dir(self) :
             for channel in self.channels :
                 self.logs[channel].close()
-        if self.host in world.connections.keys() del world.connections[self.host]
+        if self.host in world.connections.keys() : del world.connections[self.host]
         print repr(world.connections)
         if self.host in conf.autoreconnect :
             self.ssl = conf.ssl[conf.hosts.index(self.host)]
