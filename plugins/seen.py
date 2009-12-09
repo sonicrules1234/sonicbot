@@ -13,7 +13,7 @@ def main(connection, info, args) :
         weekspassed = secspassed / (60 * 60 * 24 * 7)
         weeks = int(str(weekspassed).split(".")[0])
         dayspassed = (weekspassed - weeks) * 7
-        days = int(str(daysspassed).split(".")[0])
+        days = int(str(dayspassed).split(".")[0])
         hourspassed = (dayspassed - days) * 24
         hours = int(str(hourspassed).split(".")[0])
         minspassed = (hourspassed - hours) * 60

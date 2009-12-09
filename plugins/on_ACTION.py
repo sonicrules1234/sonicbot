@@ -1,5 +1,6 @@
 import shelve
 def main(connection, info, conf) :
+    args = info["message"].split(" ")[1:]
     contextdb = shelve.open("context.db", writeback=True)
     if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
         contextdb[info["channel"]] = ["<%s> %s" % (info["sender"], info["message"])]
