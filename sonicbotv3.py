@@ -48,7 +48,6 @@ class sonicbot :
                 if plugin != "plugins/__init__.py" and plugin != "plugins\\__init__.py" :
                     self.plugins[plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", "")] = imp.load_source(plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", ""), plugin)
             print "stage3"
-            self.host = conf.hosts[world.hostcount]
             print len(conf.hosts)
             world.connections[self.host] = self
             
@@ -203,9 +202,10 @@ class sonicbot :
     def cleanup(self) :
         self.cleaningup = True
         self.logf.close()
-        for channel in self.channels :
-            self.logs[channel].close()
-        del world.connections[self.host]
+        if channels in dir(self) :
+            for channel in self.channels :
+                self.logs[channel].close()
+        if self.host in world.connections.keys() del world.connections[self.host]
         print repr(world.connections)
         if self.host in conf.autoreconnect :
             self.ssl = conf.ssl[conf.hosts.index(self.host)]
