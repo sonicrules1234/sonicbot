@@ -8,5 +8,4 @@ try :
 except :
     for connection in world.connections.keys() :
         world.connections[connection].rawsend("QUIT :Hmm, somebody hit Ctrl-C, better /quit!\n")
-        world.connections[connection].sock.close()
 print "Shutting down..."
