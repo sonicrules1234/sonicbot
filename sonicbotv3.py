@@ -199,6 +199,13 @@ class sonicbot :
         del world.connections[self.host]
         print repr(world.connections)
         if self.host in conf.autoreconnect :
+            self.ssl = conf.ssl[conf.hosts.index(self.host)]
+            conf.ports.pop(conf.hosts.index(self.host))
+            conf.ssl.pop(conf.hosts.index(self.host))
+            conf.hosts.remove(self.host)
+            conf.ssl.append(self.ssl)
+            conf.hosts.append(self.host)
+            conf.ports.append(self.port)
             newsonicbot = sonicbot()
             thread.start_new_thread(newsonicbot.start, (self.host, self.port))
         else :
@@ -422,8 +429,10 @@ class sonicbot :
 
 
             if args[0] == "quit" and info["sender"] == conf.owner and info["hostname"] in conf.admin[info["sender"]] :
-                 self.rawsend("QUIT :Leaving\n")
-                 self.sock.close()
+                self.rawsend("QUIT :Leaving\n")
+                self.sock.close()
+                if self.host in conf.autoreconnect :
+                    conf.autoreconnect.remove(self.host)
             elif args[0] == "add" and " is " in info["message"]:
                 if " ".join(args[1:]).split(" is ", 1)[0] not in self.plugins["pluginlist"].pluginlist :
                     self.factoids[" ".join(args[1:]).split(" is ", 1)[0]] = info["message"].split(" is ", 1)[1]
