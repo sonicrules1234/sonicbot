@@ -1,4 +1,4 @@
-import shelve
+import shelve, time
 def main(connection, info, conf) :
     args = info["message"].split(" ")[1:]
     contextdb = shelve.open("context.db", writeback=True)
