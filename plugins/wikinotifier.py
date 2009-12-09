@@ -16,7 +16,7 @@ def main(connection, info, args, conf, world, thread) :
         feeds.close()
         if not world.feeds.has_key(connection.host) :
             world.feeds[connection.host] = {}
-        if not world[connection.host].feeds.has_key(info["channel"]) :
+        if not world.feeds[connection.host].has_key(info["channel"]) :
             world.feeds[connection.host][info["channel"]] = {}
         if not world.feeds[connection.host][info["channel"]].has_key(feedurl) :
             world.feeds[connection.host][info["channel"]][feedurl] = []
