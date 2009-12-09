@@ -11,13 +11,13 @@ def main(connection, info, args) :
         then = seendb["users"][args[1].lower()][0]
         secspassed = now - then
         weekspassed = secspassed / (60 * 60 * 24 * 7)
-        weeks = int(str(weekspassed).split(".")[0])
+        weeks = makeint(weekspassed)
         dayspassed = (weekspassed - weeks) * 7
-        days = int(str(dayspassed).split(".")[0])
+        days = makeint(dayspassed)
         hourspassed = (dayspassed - days) * 24
-        hours = int(str(hourspassed).split(".")[0])
+        hours = makeint(hourspassed)
         minspassed = (hourspassed - hours) * 60
-        mins = int(str(minspassed).split(".")[0])
+        mins = makeint(minspassed)
         secspassed = (minspassed - mins) * 60
         secs = int(round(secspassed))
         passed = {"weeks":weeks, "days":days, "hours":hours, "minutes":mins, "seconds":secs}
@@ -33,3 +33,11 @@ def gettimestring(passed) :
             if timestring == "" : timestring = "%s seconds" % (passed[unit])
             else : timestring += "and %s seconds" % (passed[unit])
     return timestring
+
+def makeint(number) :
+    rounded = int(round(number))
+    if rounded > number :
+        returnval = rounded - 1
+    else :
+        returnval = rounded
+    return returnval
