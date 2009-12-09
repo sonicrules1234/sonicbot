@@ -1,6 +1,6 @@
 import feedparser, shelve, time
 arguments = ["self", "info", "args", "conf", "world", "thread"]
-helpstring = "feednotifier <feed url>"
+helpstring = "feednotifier <title> <feed url> <on/off>"
 minlevel = 3
 
 def main(connection, info, args, conf, world, thread) :
@@ -23,11 +23,11 @@ def main(connection, info, args, conf, world, thread) :
         if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
         elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
         else : connection.ircsend(info["channel"], "That feed is already being tracked.")
     elif onoff == "off" :
         if feedurl in world.feeds[connection.host][info["channel"]].keys() :

@@ -1,7 +1,7 @@
 import feedparser, shelve, thread, time
 arguments = ["self", "info", "args", "conf", "world", "thread"]
-helpstring = "wikinotifier <feed url>"
-minlevel = 4
+helpstring = "wikinotifier <title> <feed url> <on/off>"
+minlevel = 3
 
 def main(connection, info, args, conf, world, thread) :
     feedurl = args[-2]
@@ -23,11 +23,11 @@ def main(connection, info, args, conf, world, thread) :
         if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
         elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
+            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
         else : connection.ircsend(info["channel"], "That feed is already being tracked.")
     elif onoff == "off" :
         if feedurl in world.feeds[connection.host][info["channel"]].keys() :
@@ -44,7 +44,7 @@ def get_feed(connection, info, args, feedurl, world, indexnum, title) :
         if feed["items"][0]["date"] != feeds[feedurl]["updated"] and feeds[feedurl]["updated"] != 0 :
             feeds[feedurl]["updated"] = feed["items"][0]["date"]
             feeds.sync()
-            connection.ircsend(info["channel"], "The wiki at %s has changed! %s changed %s.  Take a look at %s for the difference." % (feedurl, feed["items"][0]["author"].encode("utf-8"), feed["items"][0]["title"].encode("utf-8"), feed["items"][0]["link"].encode("utf-8")))
+            connection.ircsend(info["channel"], "%s has changed! %s changed %s.  Take a look at %s for the difference." % (title, feed["items"][0]["author"].encode("utf-8"), feed["items"][0]["title"].encode("utf-8"), feed["items"][0]["link"].encode("utf-8")))
         elif feeds[feedurl]["updated"] == 0 :
             feeds[feedurl]["updated"] = feed["items"][0]["date"]
             feeds.sync()
