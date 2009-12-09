@@ -21,18 +21,16 @@ def main(connection, info, args, conf, world, thread) :
         if not world.feeds[connection.host][info["channel"]].has_key(feedurl) :
             world.feeds[connection.host][info["channel"]][feedurl] = []
         if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
-            world.feeds[info["channel"]][feedurl].append(True)
-            indexnum = len(world.feeds[info["channel"]][feedurl]) - 1
-            world.feeds[feedurl] = True
+            world.feeds[connection.host][info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
             thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
         elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
-            world.feeds[info["channel"]][feedurl].append(True)
-            indexnum = len(world.feeds[info["channel"]][feedurl]) - 1
-            world.feeds[feedurl] = True
+            world.feeds[connection.host][info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
             thread.start_new_thread(get_feed, (connection, info, args, args[1], world, indexnum, title))
         else : connection.ircsend(info["channel"], "That feed is already being tracked.")
     elif onoff == "off" :
-        if feedurl in world.feeds[info["channel"]].keys() :
+        if feedurl in world.feeds[connection.host][info["channel"]].keys() :
                 world.feeds[connection.host][info["channel"]][feedurl][-1] = False
                 connection.ircsend(info["channel"], "Stopped tracking feed at %s" % (feedurl))
         else : connection.ircsend(info["channel"], "No such feed being tracked.")
