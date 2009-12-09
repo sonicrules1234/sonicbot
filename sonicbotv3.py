@@ -166,14 +166,19 @@ class sonicbot :
                 self.info = info
                 if error != 1 : self.prettify(info)
     def rawsend(self, msg_out) :
-        if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-            self.sock.write(msg_out)
-        else :
-            self.sock.send(msg_out)
-        if conf.debug : print "[OUT]%s" % (msg_out)
+        try :
+            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
+                self.sock.write(msg_out)
+            else :
+                self.sock.send(msg_out)
+            if conf.debug : print "[OUT]%s" % (msg_out)
+        except :
+            print "Connection lost to", self.host
+        self.cleanup()
     def startLoop(self) :
         socketerror = False
         data = True
+        self.cleaningup = False
         while data and not socketerror :
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
                 try :
@@ -192,6 +197,10 @@ class sonicbot :
                     data = False
                 if data and not socketerror : self.dataReceived(data)
         print "connection to %s lost" % (self.host)
+        if not self.cleaningup : self.cleanup()
+
+    def cleanup(self) :
+        self.cleaningup = True
         self.logf.close()
         self.sock.close()
         for channel in self.channels :
@@ -213,6 +222,8 @@ class sonicbot :
             conf.ssl.pop(conf.hosts.index(self.host))
             conf.hosts.remove(self.host)
             del conf.channels[self.host]
+
+
     def on_ACTION(self, info, args) :
         self.logwrite(info["channel"], "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], " ".join(args[1:]).replace("", "")))
         if not conf.debug : "[%s] *%s %s\n" % (time.strftime("%H:%M:%S"), info["sender"], " ".join(args[1:]).replace("", ""))
