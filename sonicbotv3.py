@@ -203,7 +203,6 @@ class sonicbot :
     def cleanup(self) :
         self.cleaningup = True
         self.logf.close()
-        self.sock.close()
         for channel in self.channels :
             self.logs[channel].close()
         del world.connections[self.host]
@@ -442,7 +441,7 @@ class sonicbot :
 
             if args[0] == "quit" and info["sender"] == conf.owner and info["hostname"] in conf.admin[info["sender"]] :
                 self.rawsend("QUIT :Leaving\n")
-                self.sock.close()
+#                self.sock.close()
                 if self.host in conf.autoreconnect :
                     conf.autoreconnect.remove(self.host)
             elif args[0] == "add" and " is " in info["message"]:
