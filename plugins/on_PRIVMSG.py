@@ -1,4 +1,4 @@
-import shelve
+import shelve, time
 def main(connection, info, conf) :
     if info["sender"] == "OperServ" :
         words = info["message"].split(" ")
@@ -8,7 +8,14 @@ def main(connection, info, conf) :
             connection.rawsend("JOIN %s\n" % (newchannel))
             connection.rawsend("MODE %s +o %s\n" % (newchannel, conf.nick))
             connection.ircsend(newchannel, "Hello %s, I am sonicbot and I am here to help you with IRC." % (registeree))
-
+    seendb = shelve.open("seen.db", writeback=True)
+    if not seendb.has_key("users") :
+        seendb["users"] = {}
+        seendb.sync()
+    seendb["users"][info["sender"].lower()] = [time.time(), info["message"]]
+    seendb.sync()
+    seendb.close()
+    
     if info["sender"] not in conf.ignorelist :
         if info["message"].lower().startswith("hi") or info["message"].lower().startswith("hello") or info["message"].lower().startswith("hey") :
             if conf.nick in info["message"].lower() :
@@ -24,6 +31,9 @@ def main(connection, info, conf) :
             contextdb[info["channel"]].pop(0)
             contextdb.sync()
     contextdb.close()
+    
+
+
 #    if info["sender"] not in conf.ignorelist and info["hostname"] not in conf.hostignores :
 #        combos = shelve.open("combos.db", writeback=True)
 #        if info["channel"] not in combos.keys() :
