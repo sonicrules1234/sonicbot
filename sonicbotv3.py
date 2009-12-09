@@ -197,7 +197,6 @@ class sonicbot :
         for channel in self.channels :
             self.logs[channel].close()
         del world.connections[self.host]
-        world.hostcount -= 1
         print repr(world.connections)
         if self.host in conf.autoreconnect :
             newsonicbot = sonicbot()
