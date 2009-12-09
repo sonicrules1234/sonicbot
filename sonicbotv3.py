@@ -201,8 +201,8 @@ class sonicbot :
 
     def cleanup(self) :
         self.cleaningup = True
-        self.logf.close()
-        if channels in dir(self) :
+        if "logf" in dir(self) : self.logf.close()
+        if "channels" in dir(self) :
             for channel in self.channels :
                 self.logs[channel].close()
         if self.host in world.connections.keys() del world.connections[self.host]
