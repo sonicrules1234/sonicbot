@@ -283,7 +283,8 @@ class sonicbot :
                 for plugin in self.plugins["pluginlist"].pluginlist :
                     self.users["channels"][info["channel"]]["enabled"].append(plugin)
                     self.users.sync()
-        else : self.channels[info["channel"]].append(info["sender"])
+        else :
+            if info["sender"] not in info["channel"] : self.channels[info["channel"]].append(info["sender"])
         self.chanmodes[info["channel"]][info["sender"]] = []
         self.logwrite(info["channel"], "[%s] ***%s has joined %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
         if "on_JOIN" in self.plugins["pluginlist"].eventlist :
@@ -296,7 +297,8 @@ class sonicbot :
             self.logs[info["channel"]].close()
             del self.channels[info["channel"]]
             del self.chanmodes[info["channel"]]
-        else : self.channels[info["channel"]].remove(info["sender"])
+        else :
+            if info["sender"] in info["channel"] : self.channels[info["channel"]].remove(info["sender"])
         if "on_PART" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_PART"].main(self, info, conf)
 
