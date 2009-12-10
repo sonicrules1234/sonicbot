@@ -619,8 +619,8 @@ class sonicbot :
             for part in parts :
                 now = time.time()
                 if now > self.timer :
-                    self.timer = now + .8
-                else : self.timer += .8
+                    self.timer = now + 1
+                else : self.timer += 1
                 extra = self.timer - now
                 if targ_channel.startswith("#") or targ_channel.lower().endswith("serv") : thread.start_new_thread(self.threadedrawsend, ("PRIVMSG %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)), extra))
                 else : thread.start_new_thread(self.threadedrawsend, ("NOTICE %s :%s\n" % (targ_channel, self.ircfilter(part, conf.bads)), extra))
