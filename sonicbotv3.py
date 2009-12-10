@@ -431,12 +431,14 @@ class sonicbot :
     def command_parser(self, info) :
         notacommand = False
         args = info["message"][1:].split(" ")
+        if args == [] : args.append("")
         if info["message"].split(" ")[0] == conf.nick + ":" :
             if conf.ai and info["sender"] not in conf.ignorelist and "sing" not in info["message"] :
                 response = self.ai.respond(" ".join(args[1:]), info["sender"])
                 self.ircsend(info["channel"], "%s: %s" % (info["sender"], response))
             else :
                 args = info["message"].split(" ")[1:]
+                if args == [] : args.append("")
                 info["message"] = conf.prefix + " ".join(args)
         if info["message"][0] == conf.prefix and info["sender"] in conf.admin and info["hostname"] in conf.admin[info["sender"]] and info["sender"] not in conf.ignorelist and info["hostname"] not in conf.hostignores :
 
