@@ -251,6 +251,9 @@ class sonicbot :
         self.rawsend("NOTICE %s :VERSION SonicBot version 3.3.0\n" % (info["sender"]))
 
     def enable_all_plugins(self, info) :
+        """Enables all plugins for the current channel"""
+        self.users["channels"][info["channel"]]["enabled"] = []
+        self.users.sync()
         for plugin in self.plugins["pluginlist"].pluginlist :
             self.users["channels"][info["channel"]]["enabled"].append(plugin)
             self.users.sync()
@@ -262,8 +265,7 @@ class sonicbot :
                 if self.users["channels"][info["channel"]]["registered"] :
                     pass
                 else :
-                    self.users["channels"][info["channel"]]["enabled"] = []
-                    self.users.sync()
+
                     self.enable_all_plugins(info)
             else :
                 self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
@@ -287,8 +289,6 @@ class sonicbot :
                 if self.users["channels"][info["channel"]]["registered"] :
                     pass
                 else :
-                    self.users["channels"][info["channel"]]["enabled"] = []
-                    self.users.sync()
                     self.enable_all_plugins(info)
             else :
                 self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
