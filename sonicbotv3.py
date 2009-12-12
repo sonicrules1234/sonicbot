@@ -36,7 +36,7 @@ class sonicbot :
         print "So far so good"
         try :
 
-
+            if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
             self.rawsend("NICK %s \n" % (conf.nick))
             self.rawsend("USER %s * * :%s\n" % (conf.ident, conf.realname))
             self.plugins = {}
@@ -63,7 +63,7 @@ class sonicbot :
         print "Connected to", self.host
         try :
             self.logf = open("raw.txt", "a")
-            if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
+
             self.factoids = shelve.open("factoids.db")
             self.channels = {}
             self.logs = {}
@@ -252,6 +252,7 @@ class sonicbot :
 
     def on_PRIVMSG(self, info) :
         """This function gets called whenever sonicbot receives data with the PRIVMSG commdand from the server.  This includes PM's and any talking in the channels"""
+        if not info["message"]: return
         if not info["channel"].startswith("#") :
             if info["channel"] in self.users["channels"] :
                 if self.users["channels"][info["channel"]]["registered"] :
@@ -270,7 +271,7 @@ class sonicbot :
                     self.users["channels"][info["channel"]]["enabled"].append(plugin)
                     self.users.sync()
         if info["channel"] in self.channels : self.logwrite(info["channel"], "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["message"]))
-        if not info["message"]: return
+
         if info["message"][0] == conf.prefix or info["message"].split(" ")[0] == conf.nick + ":" :
             self.command_parser(info)
         if "on_PRIVMSG" in self.plugins["pluginlist"].eventlist:
