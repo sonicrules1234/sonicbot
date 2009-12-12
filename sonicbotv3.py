@@ -32,11 +32,11 @@ class sonicbot :
         
         
     def connect(self) :
+        """Initiates sonicbot after it is connected"""
         print "So far so good"
         try :
-            self.sock.connect((self.host, self.port))
-            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-                self.sock = socket.ssl(self.sock)
+
+
             self.rawsend("NICK %s \n" % (conf.nick))
             self.rawsend("USER %s * * :%s\n" % (conf.ident, conf.realname))
             self.plugins = {}
@@ -51,7 +51,7 @@ class sonicbot :
             print len(conf.hosts)
             world.connections[self.host] = self
             
-            if world.hostcount + 1 != len(conf.channels.keys()) :
+            if world.hostcount + 1 != len(conf.channels.keys()) and not self.unittest :
                 world.hostcount += 1
                 new = sonicbot()
                 thread.start_new_thread(new.start, (conf.hosts[world.hostcount], conf.ports[world.hostcount]))
@@ -95,9 +95,11 @@ class sonicbot :
                 self.users.sync()
             self.timer = 0
         except : traceback.print_exc()
-        self.startLoop()
+        if not self.unittest : self.startLoop()
 
     def start(self, host, port) :
+        error = False
+        self.unittest = False
         try :
             self.host = host
             self.port = port
@@ -109,15 +111,20 @@ class sonicbot :
             if conf.ssl[conf.hosts.index(self.host)] :
                 if world.pythonversion == "2.6" :
                     self.sock = ssl.wrap_socket(self.sock)
-            self.connect()
+
         except :
             errorlog = open("errorlog.txt", "a")
             errorlog.write(traceback.format_exc() + "\n")
             errorlog.close()
             traceback.print_exc()
-        
-
+        try :
+            self.sock.connect((self.host, self.port))
+            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
+                self.sock = socket.ssl(self.sock)
+        except : error = True
+        if not error : self.connect()
     def dataReceived(self, data):
+        """Parses the data into a dict named info"""
         if conf.debug :
             print "[IN]" + data
 
@@ -166,6 +173,7 @@ class sonicbot :
                 self.info = info
                 if error != 1 : self.prettify(info)
     def rawsend(self, msg_out) :
+        """Sends raw data through the socket"""
         try :
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
                 self.sock.write(msg_out)
@@ -176,6 +184,7 @@ class sonicbot :
             print "Connection lost to", self.host
             self.cleanup()
     def startLoop(self) :
+        """Starts the loop of receiving data and replying back to it"""
         socketerror = False
         data = True
         self.cleaningup = False
@@ -200,6 +209,7 @@ class sonicbot :
         if not self.cleaningup : self.cleanup()
 
     def cleanup(self) :
+        """Cleans up various variables after disconnection"""
         self.cleaningup = True
         if "logf" in dir(self) : self.logf.close()
         if "channels" in dir(self) :
@@ -225,19 +235,23 @@ class sonicbot :
 
 
     def on_ACTION(self, info, args) :
+        """Responds to CTCP ACTION's"""
         self.logwrite(info["channel"], "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], " ".join(args[1:]).replace("", "")))
         if not conf.debug : "[%s] *%s %s\n" % (time.strftime("%H:%M:%S"), info["sender"], " ".join(args[1:]).replace("", ""))
         if "on_ACTION" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_ACTION"].main(self, info, conf)
 
     def on_TIME(self, info) :
+        """Responds to CTCP TIME's"""
         if "on_TIME" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_TIME"].main(self, info, conf)
 
     def on_VERSION(self, info) :
+        """Reponds to CTCP VERSION's"""
         self.rawsend("NOTICE %s :VERSION SonicBot version 3.3.0\n" % (info["sender"]))
 
     def on_PRIVMSG(self, info) :
+        """This function gets called whenever sonicbot receives data with the PRIVMSG commdand from the server.  This includes PM's and any talking in the channels"""
         if not info["channel"].startswith("#") :
             if info["channel"] in self.users["channels"] :
                 if self.users["channels"][info["channel"]]["registered"] :
@@ -263,6 +277,7 @@ class sonicbot :
             self.plugins["on_PRIVMSG"].main(self, info, conf)
 
     def on_JOIN(self, info) :
+        """This function gets called whenever somebody joins a channel, including sonicbot himself"""
         if conf.nick == info["sender"] :
             self.logs[info["channel"]] = open("logs/%s.txt" % (info["channel"]), "a")
             self.channels[info["channel"]] = []
@@ -292,6 +307,7 @@ class sonicbot :
         if info["sender"] == conf.nick : self.rawsend("WHO %s\n" % (info["channel"]))
 
     def on_PART(self, info) :
+        """This function is called whenever somebody parts the channel, including sonicbot himself"""
         self.logwrite(info["channel"], "[%s] ***%s has parted %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"]))
         if conf.nick == info["sender"] :
             self.logs[info["channel"]].close()
@@ -303,6 +319,7 @@ class sonicbot :
             self.plugins["on_PART"].main(self, info, conf)
 
     def on_QUIT(self, info) :
+        """This function is called whenever somebody quits, but not when sonicbot quits"""
         quitmessage = " ".join(info["words"][2:])[1:]
         for channel in self.channels :
             if info["sender"] in self.channels[channel] :
@@ -313,6 +330,7 @@ class sonicbot :
             self.plugins["on_QUIT"].main(self, info, conf)
 
     def on_KICK(self, info) :
+        """This function is called whenever somebody gets kicked, including sonicbot himself"""
         recvr = info["words"][3]
         self.logwrite(info["channel"], "[%s] **%s has kicked %s from %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], recvr, info["channel"]))
         self.channels[info["channel"]].remove(recvr)
@@ -320,11 +338,13 @@ class sonicbot :
             self.plugins["on_KICK"].main(self, info, conf)
 
     def on_TOPIC(self, info) :
+        """This function is called whenever somebody somebody changes the topic, including sonicbot himself"""
         self.logwrite(info["channel"], '[%s] **%s has changed the topic in %s to "%s"\n' % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["channel"], info["message"]))
         if "on_TOPIC" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_TOPIC"].main(self, info, conf)
 
     def on_MODE(self, info) :
+        """This function is called whenever modes are changed"""
         mode = info["words"][3]
         modesymbols = {"y":"!", "h":"%", "o":"@", "v":"+", "F":"~", "q":"~", "a":"&"}
         if len(info["words"]) > 4 :
@@ -350,6 +370,7 @@ class sonicbot :
             self.plugins["on_MODE"].main(self, info, conf)
 
     def on_NICK(self, info) :
+        """This function is called whenever somebody /nick's"""
         if ":" in info["words"][2] :
             newnick = info["words"][2][1:]
         else : newnick = info["words"][2]
@@ -366,6 +387,7 @@ class sonicbot :
             self.plugins["on_NICK"].main(self, info, conf)
         
     def on_INVITE(self, info):
+        """This function is called whenever somebody invites sonicbot to the channel"""
         if "on_INVITE" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_INVITE"].main(self, info, conf)
             
@@ -392,6 +414,7 @@ class sonicbot :
             self.plugins["on_352"].main(self, info, conf)        
 
     def prettify(self, info) :
+        """Takes the parsed data and decides what to do with it"""
         args = info["message"].split(" ")
         if info["mode"] == "PRIVMSG" :
             if args[0] == "ACTION" :
@@ -429,6 +452,7 @@ class sonicbot :
             except :
                 self.ircsend(conf.owner, traceback.format_exc())
     def command_parser(self, info) :
+        """This function is called whenever somebody issues a command to sonicbot"""
         notacommand = False
         args = info["message"][1:].split(" ")
         if args == [] : args.append("")
@@ -579,11 +603,13 @@ class sonicbot :
                 pass
 
     def ircfilter(self, string, bads=[]) :
+        """Filters any output"""
         for bad in bads :
             string = string.replace(bad, "")
         return string
 
     def auth(self, info, minlevel) :
+        """Authenticates users"""
         if info["sender"] not in self.users["users"].keys() :
             self.users["users"][info["sender"]] = {"hostname":[self.nicks[info["sender"]]], "userlevel":1}
             self.users.sync()
@@ -605,9 +631,11 @@ class sonicbot :
             return False
 
     def threadedrawsend(self, msg_out, timer) :
+        """Used for flood control"""
         time.sleep(timer)
         if self.host in world.connections.keys() : self.rawsend(msg_out)
     def ircsend(self, targ_channel, msg_out) :
+        """Sends messages and notices"""
         for line in msg_out.split("\n") :
             length = len("PRIVMSG %s :\n" % (targ_channel))
             parts = []
@@ -631,9 +659,15 @@ class sonicbot :
                 if line.startswith("\x01ACTION") : self.logwrite(targ_channel, "[%s] *%s %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, " ".join(part.split(" ")[1:]).replace("\x01", "")))
                 else : self.logwrite(targ_channel, "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), conf.nick, self.ircfilter(part, conf.bads)))
             
-    
+    def unittestrawsend(self, msg_out) :
+        """Used during unit tests to overwrite rawsend()"""
+        print msg_out
+        self.unittestlog = open("unittestlog.txt", "a")
+        self.unittestlog.write(msg_out)
+        self.unittestlog.close()
         
     def logwrite(self, channel, log) :
+        """Logs things to file, also is used when relaying"""
         if channel in self.channels :
             self.logs[channel].write(log)
             if not conf.debug : print log
