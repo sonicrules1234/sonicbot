@@ -250,6 +250,10 @@ class sonicbot :
         """Reponds to CTCP VERSION's"""
         self.rawsend("NOTICE %s :VERSION SonicBot version 3.3.0\n" % (info["sender"]))
 
+    def enable_all_plugins(self, info) :
+        for plugin in self.plugins["pluginlist"].pluginlist :
+            self.users["channels"][info["channel"]]["enabled"].append(plugin)
+            self.users.sync()
     def on_PRIVMSG(self, info) :
         """This function gets called whenever sonicbot receives data with the PRIVMSG commdand from the server.  This includes PM's and any talking in the channels"""
         if not info["message"]: return
@@ -260,16 +264,12 @@ class sonicbot :
                 else :
                     self.users["channels"][info["channel"]]["enabled"] = []
                     self.users.sync()
-                    for plugin in self.plugins["pluginlist"].pluginlist :
-                        self.users["channels"][info["channel"]]["enabled"].append(plugin)
-                        self.users.sync()
+                    self.enable_all_plugins(info)
             else :
                 self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
 
                 self.users.sync()
-                for plugin in self.plugins["pluginlist"].pluginlist :
-                    self.users["channels"][info["channel"]]["enabled"].append(plugin)
-                    self.users.sync()
+                self.enable_all_plugins(info)
         if info["channel"] in self.channels : self.logwrite(info["channel"], "[%s] <%s> %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], info["message"]))
 
         if info["message"][0] == conf.prefix or info["message"].split(" ")[0] == conf.nick + ":" :
@@ -289,16 +289,12 @@ class sonicbot :
                 else :
                     self.users["channels"][info["channel"]]["enabled"] = []
                     self.users.sync()
-                    for plugin in self.plugins["pluginlist"].pluginlist :
-                        self.users["channels"][info["channel"]]["enabled"].append(plugin)
-                        self.users.sync()
+                    self.enable_all_plugins(info)
             else :
                 self.users["channels"][info["channel"]] = {"registered":False, "enabled":[]}
 
                 self.users.sync()
-                for plugin in self.plugins["pluginlist"].pluginlist :
-                    self.users["channels"][info["channel"]]["enabled"].append(plugin)
-                    self.users.sync()
+                self.enable_all_plugins(info)
         else :
             if info["sender"] not in info["channel"] : self.channels[info["channel"]].append(info["sender"])
         self.chanmodes[info["channel"]][info["sender"]] = []
