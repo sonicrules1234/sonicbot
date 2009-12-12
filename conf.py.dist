@@ -3,6 +3,7 @@ ports = [6667]
 ssl = [False]
 ipv6 = [False]
 ident = ""
+committracker = False
 nick = ident
 channels = {"":["#sonicbot"]}
 autoreconnect = []
