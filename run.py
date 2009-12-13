@@ -29,6 +29,7 @@ thread.start_new_thread(botinstance.start, (conf.hosts[world.hostcount], conf.po
 try :
     if conf.committracker :
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('', 9001))
         s.listen(1)
         while True :
