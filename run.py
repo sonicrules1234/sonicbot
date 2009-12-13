@@ -1,4 +1,4 @@
-import conf, world, sonicbotv3, thread, time, socket, shelve, simplejson, traceback
+import conf, world, sonicbotv3, thread, time, socket, shelve, simplejson, traceback, urllib
 class sonicbotd :
     def onConnect(self, sock, address) :
         self.sock = sock
@@ -45,7 +45,7 @@ try :
                         for channel in commits["networks"][network].keys() :
                             if json[u"repository"][u"url"].encode("utf-8") in commits["networks"][network][channel] :
                                 for commit in json[u"commits"] :
-                                    if network in world.connections.keys() : world.connections[network].ircsend(channel, "There has been another commit to %s by %s '%s' %s" % (json[u"repository"][u"name"].encode("utf-8"), commit[u"author"][u"name"].encode("utf-8"), commit[u"message"].encode("utf-8"), commit[u"url"].encode("utf-8")))
+                                    if network in world.connections.keys() : world.connections[network].ircsend(channel, "There has been another commit to %s by %s '%s' %s" % (json[u"repository"][u"name"].encode("utf-8"), commit[u"author"][u"name"].encode("utf-8"), commit[u"message"].encode("utf-8"), urllib.urlopen("http://is.gd/api.php?longurl=" + commit[u"url"].encode("utf-8")).read()))
                     commits.close()
             except : traceback.print_exc()
     else :
