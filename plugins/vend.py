@@ -12,7 +12,7 @@ def main(connection, info, args, world) :
         winningscore = max(scores)
         winners = [x["choice"] for x in votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["choices"] if len(x["votes"]) == winningscore]
         if len(winners) == 1 : connection.ircsend(info["channel"], "The winner is %s!" % (winners[0]))
-        else : connection.ircsend(info["channels"], "The winners with a tie in 1st place are: %s and %s." % (", ".join(winners[:-1]), winners[-1]))
+        else : connection.ircsend(info["channel"], "The winners with a tie in 1st place are: %s and %s." % (", ".join(winners[:-1]), winners[-1]))
         votes["networks"][world.hostnicks[connection.host]].pop(int(args[1]) - 1)
         votes.sync()
     else : connection.ircsend(info["channel"], "That vote has not yet started!")
