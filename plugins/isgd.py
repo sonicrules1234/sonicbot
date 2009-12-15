@@ -4,7 +4,17 @@ helpstring = "isgd <url>"
 minlevel = 1
 
 def main(connection, info, args) :
+    connection.ircsend(info["channel"], "%s: %s" % (info["sender"], getnewurl(args[1])))
+
+def real2isgd(url) :
+    newurl = urllib.urlopen("http://is.gd/api.php?longurl=" + url).read()
+    return newurl
+
+def isgd2real(url) :
+    newurl = urllib.urlopen(args[1]).geturl()
+    return newurl
+
+def getnewurl(oldurl) :
     if args[1].startswith("http://is.gd/") :
-        newurl = urllib.urlopen(args[1]).geturl()
-    else : newurl = urllib.urlopen("http://is.gd/api.php?longurl=" + args[1]).read()
-    connection.ircsend(info["channel"], "%s: %s" % (info["sender"], newurl))
+        return isgd2real(oldurl)
+    else : return real2isgd(oldurl)
