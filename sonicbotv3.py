@@ -613,7 +613,7 @@ class sonicbot :
         if self.users["users"][info["sender"]]["userlevel"] in [0, 1] and self.nicks[info["sender"]] not in self.users["users"][info["sender"]]["hostname"]:
             self.users["users"][info["sender"]]["hostname"].append(self.nicks[info["sender"]])
             self.users.sync()
-        if info["hostname"] in self.users["users"][info["sender"]]["hostname"] and minlevel != 1 :
+        if info["hostname"] in self.users["users"][info["sender"]]["hostname"] or minlevel == 1 :
             if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
                 if minlevel != 3 or self.users["users"][info["sender"]]["userlevel"] in [4, 5] : return True
                 else :
