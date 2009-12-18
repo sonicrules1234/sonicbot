@@ -6,7 +6,7 @@ def main(connection, info, conf) :
         contextdb[info["channel"]] = ["<%s> %s" % (info["sender"], info["message"])]
         contextdb.sync()
     elif contextdb.has_key(info["channel"]) :
-        contextdb[info["channel"]].append("*%s %s" % (info["sender"], " ".join(args[1:]).replace("", "")))
+        contextdb[info["channel"]].append("*%s %s" % (info["sender"], " ".join(args).replace("", "")))
         contextdb.sync()
         if len(contextdb[info["channel"]]) > 10 :
             contextdb[info["channel"]].pop(0)
