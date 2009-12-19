@@ -67,7 +67,7 @@ class sonicbot :
             self.factoids = shelve.open("factoids.db")
             self.channels = {}
             self.logs = {}
-            self.logs[conf.nick] = open("PMs.txt" % (conf.logdir), "a")
+            self.logs[conf.nick] = open("PMs.txt", "a")
             if conf.ai :
                 self.ai = aiml.Kernel()
                 self.ai.learn("std-startup.xml")
