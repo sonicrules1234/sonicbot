@@ -11,10 +11,10 @@ def real2isgd(url) :
     return newurl
 
 def isgd2real(url) :
-    newurl = urllib.urlopen(args[1]).geturl()
+    newurl = urllib.urlopen(url).geturl()
     return newurl
 
 def getnewurl(oldurl) :
-    if args[1].startswith("http://is.gd/") :
+    if oldurl.startswith("http://is.gd/") :
         return isgd2real(oldurl)
     else : return real2isgd(oldurl)
