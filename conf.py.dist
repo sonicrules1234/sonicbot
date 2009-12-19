@@ -26,3 +26,4 @@ mail_url = ""
 hostignores = []
 twituser = ""
 twitpass = ""
+logdir = "logs"

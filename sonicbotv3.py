@@ -67,7 +67,7 @@ class sonicbot :
             self.factoids = shelve.open("factoids.db")
             self.channels = {}
             self.logs = {}
-            self.logs[conf.nick] = open("logs/PMs.txt", "a")
+            self.logs[conf.nick] = open("PMs.txt" % (conf.logdir), "a")
             if conf.ai :
                 self.ai = aiml.Kernel()
                 self.ai.learn("std-startup.xml")
@@ -282,7 +282,7 @@ class sonicbot :
     def on_JOIN(self, info) :
         """This function gets called whenever somebody joins a channel, including sonicbot himself"""
         if conf.nick == info["sender"] :
-            self.logs[info["channel"]] = open("logs/%s.txt" % (info["channel"]), "a")
+            self.logs[info["channel"]] = open("%s/%s.txt" % (conf.logdir, info["channel"]), "a")
             self.channels[info["channel"]] = []
             self.chanmodes[info["channel"]] = {}
             if info["channel"] in self.users["channels"] :
@@ -674,7 +674,7 @@ class sonicbot :
                         if server != self.host and channel in world.connections[server].channels :
                             world.connections[server].rawsend("PRIVMSG %s :[%s] %s\n" % (channel, world.hostnicks[self.host], log.split("] ", 1)[1]))
                 self.logs[channel].close()
-                self.logs[channel] = open("logs/%s.txt" % (channel), "a")
+                self.logs[channel] = open("%s/%s.txt" % (conf.logdir, channel), "a")
         else : self.logs[conf.nick].write(log)
 
 if "logs" not in glob.glob("*") :
