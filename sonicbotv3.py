@@ -197,14 +197,17 @@ class sonicbot :
                     socketerror = True
                     data = False
                 if data and not socketerror :
-                    self.dataReceived(data)
+                    try : self.dataReceived(data)
+                    except : traceback.print_exc()
             else :
                 try :
                     data = self.sock.recv(4096)
                 except :
                     socketerror = True
                     data = False
-                if data and not socketerror : self.dataReceived(data)
+                if data and not socketerror :
+                    try : self.dataReceived(data)
+                    except : traceback.print_exc()
         print "connection to %s lost" % (self.host)
         if not self.cleaningup : self.cleanup()
 
