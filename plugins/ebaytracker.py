@@ -40,7 +40,7 @@ def main(connection, info, args, conf, world, thread) :
 def get_feed(connection, info, args, feedurl, world, indexnum, title) :
     while world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
         feeds = shelve.open("feeds-%s.db" % (world.hostnicks[connection.host]), writeback=True)
-        good = urllib.urlopen("http://cgi.ebay.com/24-1-Inch-Sun-Microsystems-Computer-Screen-HD_W0QQitemZ260526548920QQcmdZViewItemQQptZComputer_Monitors?hash=item3ca897a7b8").read()
+        good = urllib.urlopen(feedurl).read()
         price = re.search(r'<span id\=\"v4\-11\" class\=\"vi\-is1\-prcp\">(.+?)<\/span>', good).group(1)
 
         print "Checking feed"
