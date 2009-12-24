@@ -6,7 +6,7 @@ minlevel = 3
 def main(connection, info, args, conf, world, thread) :
     feedurl = args[-2]
     onoff = args[-1]
-    title = args[1:-3]
+    title = " ".join(args[1:-2])
     if onoff == "on" :
         feeds = shelve.open("feeds-%s.db" % (world.hostnicks[connection.host]), writeback=True)
         feeds[feedurl] = {}
