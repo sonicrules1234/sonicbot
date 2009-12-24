@@ -673,7 +673,7 @@ class sonicbot :
             if not conf.debug : print log
             if channel != conf.nick :
                 if channel in world.relay_channels :
-                    for server in world.connections :
+                    for server in world.connections.keys() :
                         if server != self.host and channel in world.connections[server].channels :
                             world.connections[server].rawsend("PRIVMSG %s :[%s] %s\n" % (channel, world.hostnicks[self.host], log.split("] ", 1)[1]))
                 self.logs[channel].close()
