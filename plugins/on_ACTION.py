@@ -1,6 +1,6 @@
-import shelve, time
+import shelve, time, random
 def main(connection, info, conf) :
-    args = info["message"].split(" ")[1:]
+    args = info["message"].split(" ")
     contextdb = shelve.open("context.db", writeback=True)
     if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
         contextdb[info["channel"]] = ["<%s> %s" % (info["sender"], info["message"])]
@@ -18,3 +18,7 @@ def main(connection, info, conf) :
         seendb.sync()
     seendb["users"][info["sender"].lower()] = [time.time(), "*%s %s" % (info["sender"], " ".join(args[1:]).replace("", ""))]
     seendb.close()
+    if args[1] in ["slaps", "punches", "stomps", "hurts", "hits", "fucks", "smacks", "crunches", "kicks", "barfs", "forces", "force", "squishes", "bodyslams", "shoots", "compresses"] :
+        if args[2] == "sonicbot" or args[-1] == "sonicbot" :
+            connection.ircsend(info["channel"], random.choice(["Oww!", "Ouch, that hurt!", "\x01ACTION curls up in fetal position\x01", "\x01ACTION slaps %s\x01" % (info["sender"]), "\x01ACTION smacks %s\x01" % (info["sender"])]))
+            
