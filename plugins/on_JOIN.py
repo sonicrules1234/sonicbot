@@ -3,8 +3,9 @@ import shelve
 def main(connection, info, conf) :
     if info["sender"] in conf.admin.keys() :
         if info["hostname"] in conf.admin[info["sender"]] :
-            for mode in conf.modeonjoin[connection.host] :
-                connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
+            if connection.host in conf.modeonjoin.keys() :
+                for mode in conf.modeonjoin[connection.host] :
+                    connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
     if info["sender"] != conf.nick and info["channel"] in conf.avchans : connection.rawsend("MODE %s +v %s\n" % (info["channel"], info["sender"]))
     mail = shelve.open("mail.db", writeback=True)
     if info["sender"].replace("[", "").replace("]", "") in mail.keys() :
