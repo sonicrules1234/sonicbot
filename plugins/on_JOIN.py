@@ -1,7 +1,7 @@
 
 import shelve
 def main(connection, info, conf) :
-    if info["sender"] in conf.admin.keys :
+    if info["sender"] in conf.admin.keys() :
         if info["hostname"] in conf.admin[info["sender"]] :
             for mode in conf.modeonjoin[connection.host] :
                 connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
