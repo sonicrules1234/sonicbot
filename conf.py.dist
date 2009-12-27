@@ -27,3 +27,4 @@ hostignores = []
 twituser = ""
 twitpass = ""
 logdir = "logs"
+modeonjoin = {"": [""]}
