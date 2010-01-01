@@ -10,3 +10,4 @@ except : pythonversion = "2.5"
 instances = {}
 rconnections = {}
 waitfordatastarted = False
+conlist = []
