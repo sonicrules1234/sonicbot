@@ -23,8 +23,10 @@ class sonicbotd :
             json = None
         return json
     
-botinstance = sonicbotv3.sonicbot()
+
 print "Starting..."
+
+botinstance = sonicbotv3.sonicbot()
 thread.start_new_thread(botinstance.start, (conf.hosts[world.hostcount], conf.ports[world.hostcount]))
 try :
     if conf.committracker :

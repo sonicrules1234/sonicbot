@@ -7,3 +7,6 @@ try :
     import ssl
     pythonversion = "2.6"
 except : pythonversion = "2.5"
+instances = {}
+rconnections = {}
+waitfordatastarted = False

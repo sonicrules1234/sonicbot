@@ -24,7 +24,7 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import time, glob, shelve, traceback, os, aiml, imp
+import time, glob, shelve, traceback, os, aiml, imp, select
 import socket, conf, thread, world
 if world.pythonversion == "2.6" :
     import ssl
@@ -32,6 +32,9 @@ class sonicbot :
         
         
     def connect(self) :
+        world.connections[self.host] = self
+        world.rconnections[self.sock] = self.host
+        world.instances[self.sock] = self
         """Initiates sonicbot after it is connected"""
         print "So far so good"
         try :
@@ -95,7 +98,9 @@ class sonicbot :
                 self.users.sync()
             self.timer = 0
         except : traceback.print_exc()
-        if not self.unittest : self.startLoop()
+        if not world.waitfordatastarted :
+            thread.start_new_thread(waitfordata, ())
+#        if not self.unittest : self.startLoop()
 
     def start(self, host, port) :
         error = False
@@ -182,6 +187,7 @@ class sonicbot :
             if conf.debug : print "[OUT]%s" % (msg_out)
         except :
             print "Connection lost to", self.host
+            traceback.print_exc()
             self.cleanup()
     def startLoop(self) :
         """Starts the loop of receiving data and replying back to it"""
@@ -679,6 +685,35 @@ class sonicbot :
                 self.logs[channel].close()
                 self.logs[channel] = open("%s/%s.txt" % (conf.logdir, channel), "a")
         else : self.logs[conf.nick].write(log)
+
+def waitfordata() :
+    givent = False
+    while True :
+        noerror = False
+        tempconlist = [world.connections[connection].sock for connection in world.connections.keys()]
+        try :
+            connections = select.select(tempconlist, [], [], 5)
+            noerror = True
+        except :
+            if not givent : traceback.print_exc()
+            givent = True
+            for network in tempconlist :
+                try :
+                    connections = select.select([network], [], [], 0)
+                except :
+                    world.instances[network].cleanup()
+
+        if noerror :
+            for connection in connections[0] :
+                try : data = connection.recv(4096)
+                except : data = ""
+                if data != "" :
+                    world.instances[connection].dataReceived(data)
+                else:
+                    print "No data, closing the connection"
+                    world.instances[connection].cleanup()
+        del tempconlist
+
 
 if "logs" not in glob.glob("*") :
     os.mkdir("logs")
