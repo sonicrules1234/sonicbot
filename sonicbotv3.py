@@ -38,14 +38,13 @@ class sonicbot :
         
         """Initiates sonicbot after it is connected"""
         try :
-
             if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
             self.rawsend("NICK %s \n" % (conf.nick))
             self.rawsend("USER %s * * :%s\n" % (conf.ident, conf.realname))
             self.plugins = {}
             for filename in glob.glob("plugins/*.pyc") :
                 os.remove(filename)
-           for plugin in glob.glob("plugins/*.py") :
+            for plugin in glob.glob("plugins/*.py") :
                 if plugin != "plugins/__init__.py" and plugin != "plugins\\__init__.py" :
                     self.plugins[plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", "")] = imp.load_source(plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", ""), plugin)
             world.connections[self.host] = self
