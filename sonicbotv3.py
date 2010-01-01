@@ -28,13 +28,12 @@ import time, glob, shelve, traceback, os, aiml, imp, select
 import socket, conf, thread, world
 if world.pythonversion == "2.6" :
     import ssl
+else : import OpenSSL
 class sonicbot :
         
         
     def connect(self) :
-        world.connections[self.host] = self
-        world.rconnections[self.sock] = self.host
-        world.instances[self.sock] = self
+
         
         """Initiates sonicbot after it is connected"""
         try :
@@ -61,7 +60,6 @@ class sonicbot :
         print "Connected to", self.host
         try :
             self.logf = open("raw.txt", "a")
-
             self.factoids = shelve.open("factoids.db")
             self.channels = {}
             self.logs = {}
@@ -93,6 +91,9 @@ class sonicbot :
                 self.users.sync()
             self.timer = 0
         except : traceback.print_exc()
+        world.connections[self.host] = self
+        world.rconnections[self.sock] = self.host
+        world.instances[self.sock] = self
         world.conlist.append(self.sock)
         if not world.waitfordatastarted :
             thread.start_new_thread(waitfordata, ())
@@ -121,10 +122,10 @@ class sonicbot :
             errorlog.write(traceback.format_exc() + "\n")
             errorlog.close()
             traceback.print_exc()
-        try :
-            self.sock.connect((self.host, self.port))
+        try :            
             if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-                self.sock = socket.ssl(self.sock)
+                self.sock = OpenSSL.SSL.Connection(OpenSSL.SSL.Context(OpenSSL.SSL.SSLv3_METHOD), self.sock)
+            self.sock.connect((self.host, self.port))
         except : error = True
         if not error : self.connect()
     def dataReceived(self, data):
@@ -178,10 +179,7 @@ class sonicbot :
     def rawsend(self, msg_out) :
         """Sends raw data through the socket"""
         try :
-            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-                self.sock.write(msg_out)
-            else :
-                self.sock.send(msg_out)
+            self.sock.send(msg_out)
             if conf.debug : print "[OUT]%s" % (msg_out)
         except :
             print "Connection lost to", self.host
