@@ -35,23 +35,19 @@ class sonicbot :
         world.connections[self.host] = self
         world.rconnections[self.sock] = self.host
         world.instances[self.sock] = self
+        
         """Initiates sonicbot after it is connected"""
-        print "So far so good"
         try :
 
             if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
             self.rawsend("NICK %s \n" % (conf.nick))
             self.rawsend("USER %s * * :%s\n" % (conf.ident, conf.realname))
             self.plugins = {}
-            print "Stage1"
             for filename in glob.glob("plugins/*.pyc") :
                 os.remove(filename)
-            print "stage2"
-            for plugin in glob.glob("plugins/*.py") :
+           for plugin in glob.glob("plugins/*.py") :
                 if plugin != "plugins/__init__.py" and plugin != "plugins\\__init__.py" :
                     self.plugins[plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", "")] = imp.load_source(plugin.replace("plugins\\", "").replace("plugins/", "").replace(".py", ""), plugin)
-            print "stage3"
-            print len(conf.hosts)
             world.connections[self.host] = self
             
             if world.hostcount + 1 != len(conf.channels.keys()) and not self.unittest :
@@ -98,13 +94,17 @@ class sonicbot :
                 self.users.sync()
             self.timer = 0
         except : traceback.print_exc()
+        world.conlist.append(self.sock)
         if not world.waitfordatastarted :
             thread.start_new_thread(waitfordata, ())
-#        if not self.unittest : self.startLoop()
+            world.waitfordatastarted = True
 
     def start(self, host, port) :
+        self.counter = 0
         error = False
         self.unittest = False
+        self.bufferin = open("in-%s.txt" % (host), "w")
+        self.bufferout = open("out-%s.txt" % (host), "w")
         try :
             self.host = host
             self.port = port
@@ -131,14 +131,13 @@ class sonicbot :
     def dataReceived(self, data):
         """Parses the data into a dict named info"""
         if conf.debug :
-            print "[IN]" + data
-
+            print "[IN %s]" % (self.host) + data
+        self.bufferin.write(self.buffer + "\n")
         self.logf.write("[IN]%s" % (data))
-        
-
         error = 0
         lines = data.replace("\r", "").split("\n")
         lines[0] = self.buffer + lines[0]
+        self.bufferout.write(self.buffer + "\n")
         self.buffer = lines[-1]
         for line in lines[:-1] :
             if line != "" :
@@ -189,33 +188,6 @@ class sonicbot :
             print "Connection lost to", self.host
             traceback.print_exc()
             self.cleanup()
-    def startLoop(self) :
-        """Starts the loop of receiving data and replying back to it"""
-        socketerror = False
-        data = True
-        self.cleaningup = False
-        while data and not socketerror :
-            if conf.ssl[conf.hosts.index(self.host)] and world.pythonversion == "2.5" :
-                try :
-                    data = self.sock.read()
-                    socketerror = False
-                except :
-                    socketerror = True
-                    data = False
-                if data and not socketerror :
-                    try : self.dataReceived(data)
-                    except : traceback.print_exc()
-            else :
-                try :
-                    data = self.sock.recv(4096)
-                except :
-                    socketerror = True
-                    data = False
-                if data and not socketerror :
-                    try : self.dataReceived(data)
-                    except : traceback.print_exc()
-        print "connection to %s lost" % (self.host)
-        if not self.cleaningup : self.cleanup()
 
     def cleanup(self) :
         """Cleans up various variables after disconnection"""
@@ -225,7 +197,6 @@ class sonicbot :
             for channel in self.channels :
                 self.logs[channel].close()
         if self.host in world.connections.keys() : del world.connections[self.host]
-        print repr(world.connections)
         if self.host in conf.autoreconnect :
             self.ssl = conf.ssl[conf.hosts.index(self.host)]
             conf.ports.pop(conf.hosts.index(self.host))
@@ -257,7 +228,7 @@ class sonicbot :
 
     def on_VERSION(self, info) :
         """Reponds to CTCP VERSION's"""
-        self.rawsend("NOTICE %s :VERSION SonicBot version 3.3.0\n" % (info["sender"]))
+        self.rawsend("NOTICE %s :VERSION SonicBot version 3.4.0\n" % (info["sender"]))
 
     def enable_all_plugins(self, info) :
         """Enables all plugins for the current channel"""
@@ -351,27 +322,30 @@ class sonicbot :
 
     def on_MODE(self, info) :
         """This function is called whenever modes are changed"""
-        mode = info["words"][3]
-        modesymbols = {"y":"!", "h":"%", "o":"@", "v":"+", "F":"~", "q":"~", "a":"&"}
-        if len(info["words"]) > 4 :
-            recvrs = info["words"][4:]
-            recvr = 0
-            self.logwrite(info["channel"], "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, " ".join(recvrs)))
-            for letter in mode:
-                if letter == "+" : modetype = True
-                elif letter == "-" : modetype = False
-                else :
-                    if letter in modesymbols.keys() :
-                        print self.host
-                        if modetype :
-                            if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                                self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
-                        elif not modetype :
-                            if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                                self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
-                        recvr += 1
-        else :
-            self.logwrite(conf.nick, "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, info["channel"]))
+        try : 
+            mode = info["words"][3]
+            modesymbols = {"y":"!", "h":"%", "o":"@", "v":"+", "F":"~", "q":"~", "a":"&"}
+            if len(info["words"]) > 4 :
+                recvrs = info["words"][4:]
+                recvr = 0
+                self.logwrite(info["channel"], "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, " ".join(recvrs)))
+                for letter in mode:
+                    if letter == "+" : modetype = True
+                    elif letter == "-" : modetype = False
+                    else :
+                        if letter in modesymbols.keys() :
+                            print self.host
+                            if modetype :
+                                if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                    self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
+                            elif not modetype :
+                                if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                    self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
+                            recvr += 1
+            else :
+                self.logwrite(conf.nick, "[%s] **%s set mode %s on %s\n" % (time.strftime("%b %d %Y, %H:%M:%S %Z"), info["sender"], mode, info["channel"]))
+        except :
+            traceback.print_exc()
         if "on_MODE" in self.plugins["pluginlist"].eventlist :
             self.plugins["on_MODE"].main(self, info, conf)
 
@@ -398,22 +372,22 @@ class sonicbot :
             self.plugins["on_INVITE"].main(self, info, conf)
             
     def on_353(self, info) :
-        for nick in info["words"][5:] :
-            if nick != "" :
-                correctnick = nick.replace(":", "")
-                newnick = nick.replace(":", "")
-                for mode in ["!", "%", "@", "&", "~", "+"] :
-                    newnick = newnick.replace(mode, "")
-                self.chanmodes[info["words"][4].lower()][newnick] = []
-                if newnick == conf.nick : print "Yep", newnick, self.host
-                for mode in ["!", "%", "@", "&", "~", "+"] :
-                    if mode in correctnick :
-                        self.chanmodes[info["words"][4].lower()][newnick].append(mode)
-                correctnick = newnick
-                self.channels[info["words"][4].lower()].append(correctnick)
-        if "on_353" in self.plugins["pluginlist"].eventlist :
-            self.plugins["on_353"].main(self, info, conf)
-
+        try :
+            for nick in info["words"][5:] :
+                if nick != "" :
+                    correctnick = nick.replace(":", "")
+                    newnick = nick.replace(":", "")
+                    for mode in ["!", "%", "@", "&", "~", "+"] :
+                        newnick = newnick.replace(mode, "")
+                    self.chanmodes[info["words"][4].lower()][newnick] = []
+                    for mode in ["!", "%", "@", "&", "~", "+"] :
+                        if mode in correctnick :
+                            self.chanmodes[info["words"][4].lower()][newnick].append(mode)
+                    correctnick = newnick
+                    self.channels[info["words"][4].lower()].append(correctnick)
+            if "on_353" in self.plugins["pluginlist"].eventlist :
+                self.plugins["on_353"].main(self, info, conf)
+        except : traceback.print_exc()
     def on_352(self, info) :
         self.nicks[info["words"][7]] = info["words"][5]
         if "on_352" in self.plugins["pluginlist"].eventlist :
@@ -690,7 +664,7 @@ def waitfordata() :
     givent = False
     while True :
         noerror = False
-        tempconlist = [world.connections[connection].sock for connection in world.connections.keys()]
+        tempconlist = world.conlist[:]
         try :
             connections = select.select(tempconlist, [], [], 5)
             noerror = True
@@ -706,7 +680,9 @@ def waitfordata() :
         if noerror :
             for connection in connections[0] :
                 try : data = connection.recv(4096)
-                except : data = ""
+                except :
+                    traceback.print_exc()
+                    data = ""
                 if data != "" :
                     world.instances[connection].dataReceived(data)
                 else:
