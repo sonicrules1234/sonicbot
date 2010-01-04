@@ -16,7 +16,7 @@ def main(connection, info, conf) :
     if not seendb.has_key("users") :
         seendb["users"] = {}
         seendb.sync()
-    seendb["users"][info["sender"].lower()] = [time.time(), "*%s %s" % (info["sender"], " ".join(args[1:]).replace("", ""))]
+    seendb["users"][info["sender"].lower()] = [time.time(), "*%s %s" % (info["sender"], " ".join(args).replace("", ""))]
     seendb.close()
     if args[0] in ["slaps", "punches", "stomps", "hurts", "rapes", "hits", "fucks", "smacks", "crunches", "kicks", "barfs", "forces", "force", "squishes", "bodyslams", "shoots", "compresses", "tackles"] :
         if args[1] == conf.nick or args[-1] == conf.nick :
