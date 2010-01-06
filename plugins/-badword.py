@@ -1,3 +1,4 @@
+import shelve
 arguments = ["self", "info", "args"]
 helpstring = "-badword <word>"
 minlevel = 3
