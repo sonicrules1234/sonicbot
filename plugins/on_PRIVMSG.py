@@ -15,7 +15,24 @@ def main(connection, info, conf) :
     seendb["users"][info["sender"].lower()] = [time.time(), info["message"]]
     seendb.sync()
     seendb.close()
-    
+    badwords = shelve.open("badwords.db", writeback=True)
+    if badwords.has_key(connection.host) :
+        if badwords[connection.host].has_key(info["channel"]) :
+            nosay = badwords[connection.host][info["channel"]]["badwords"]
+            for word in nosay :
+                if word in info["message"].lower().replace(" ", "") :
+                    if info["sender"] not in badwords[connection.host][info["channel"]]["users"] :
+                        badwords[connection.host][info["channel"]]["users"][info["sender"]] = 0
+                        badwords.sync()
+                    if badwords[connection.host][info["channel"]]["users"][info["sender"]] > 0 :
+                        if info["sender"] in connection.nicks.keys() :
+                            target = "*!*@%s" % (connection.nicks[info["sender"]])
+                        else : target = "%s*!*@*" % (info["sender"])
+                        connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
+                    connection.rawsend("KICK %s %s :%s\n" % (info["channel"], info["sender"], "Don't use that word!"))
+                    badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
+                    badwords.sync()
+    badwords.close()
     if info["sender"] not in conf.ignorelist :
         if info["message"].lower().startswith("hi") or info["message"].lower().startswith("hello") or info["message"].lower().startswith("hey") :
             if conf.nick in info["message"].lower() :
