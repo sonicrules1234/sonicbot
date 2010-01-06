@@ -11,7 +11,7 @@ def main(connection, info, args) :
     if not badwords[connection.host].has_key(info["channel"]) :
         badwords[connection.host][info["channel"]] = {"users":{}, "badwords":[]}
         badwords.sync()
-    if not badwords[connection.host][info["channel"]]["badwords"].has_key(args[1]) :
+    if args[1] not in badwords[connection.host][info["channel"]]["badwords"] :
         badwords[connection.host][info["channel"]]["badwords"].append(args[1])
         badwords.sync()
         connection.ircsend(info["channel"], "Bad word added successfully.")
