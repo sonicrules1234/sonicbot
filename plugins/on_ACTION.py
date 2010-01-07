@@ -38,5 +38,5 @@ def main(connection, info, conf) :
     seendb.close()
     if args[0] in ["slaps", "punches", "stomps", "hurts", "rapes", "hits", "fucks", "smacks", "crunches", "kicks", "barfs", "forces", "force", "squishes", "bodyslams", "shoots", "compresses", "tackles"] :
         if args[1] == conf.nick or args[-1] == conf.nick :
-            connection.ircsend(info["channel"], random.choice(["Oww!", "Ouch, that hurt!", "\x01ACTION curls up in fetal position\x01", "\x01ACTION slaps %s\x01" % (info["sender"]), "\x01ACTION smacks %s\x01" % (info["sender"]), "\x01ACTION kicks %s\x01" % (info["sender"])]))
+            connection.ircsend(info["channel"], random.choice(["Oww!", "Ouch, that hurt!", "\x01ACTION curls up in fetal position\x01", "\x01ACTION slaps %s\x01" % (info["sender"]), "\x01ACTION smacks %s\x01" % (info["sender"]), "\x01ACTION kicks %s\x01" % (info["sender"]), "\x01ACTION explodes\x01"]))
             
