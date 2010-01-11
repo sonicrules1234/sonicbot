@@ -4,11 +4,12 @@ minlevel = 1
 helpstring = "mail <command> [nick] [number/message]  Use 'mail help' for more details"
 
 def main(connection, info, args) :
+    mail = shelve.open("mail.db", writeback=True)
     if args[1] == "send" :
         send_mail(connection, mail, info, ["mail"] + args[2:])
     else :
         messages = []
-        mail = shelve.open("mail.db", writeback=True)
+
         if mail.has_key(info["sender"].replace("[", "").replace("]", "")) :
             if info["hostname"] in mail[info["sender"].replace("[", "").replace("]", "")]["hostname"] :
                 for person in mail[info["sender"].replace("[", "").replace("]", "")]["userorder"] :
