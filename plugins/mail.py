@@ -4,21 +4,21 @@ minlevel = 1
 helpstring = "mail <command> [nick] [number/message]  Use 'mail help' for more details"
 
 def main(connection, info, args) :
-    messages = []
-    mail = shelve.open("mail.db", writeback=True)
-    if mail.has_key(info["sender"].replace("[", "").replace("]", "")) :
-        if info["hostname"] in mail[info["sender"].replace("[", "").replace("]", "")]["hostname"] :
-            for person in mail[info["sender"].replace("[", "").replace("]", "")]["userorder"] :
-                if mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person] != {} :
-                    for messaget in mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person]["msgorder"] :
-                        messages.append([person, messaget[0], mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person][messaget[0]], messaget[1]])
-                else :
-                    del mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person]
-                    mail[info["sender"].replace("[", "").replace("]", "")]["userorder"].remove(person)
-            mail.sync()
-            if args[1] == "send" :
-                send_mail(connection, mail, info, ["mail"] + args[2:])
-            else :
+    if args[1] == "send" :
+        send_mail(connection, mail, info, ["mail"] + args[2:])
+    else :
+        messages = []
+        mail = shelve.open("mail.db", writeback=True)
+        if mail.has_key(info["sender"].replace("[", "").replace("]", "")) :
+            if info["hostname"] in mail[info["sender"].replace("[", "").replace("]", "")]["hostname"] :
+                for person in mail[info["sender"].replace("[", "").replace("]", "")]["userorder"] :
+                    if mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person] != {} :
+                        for messaget in mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person]["msgorder"] :
+                            messages.append([person, messaget[0], mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person][messaget[0]], messaget[1]])
+                    else :
+                        del mail[info["sender"].replace("[", "").replace("]", "")]["messages"][person]
+                        mail[info["sender"].replace("[", "").replace("]", "")]["userorder"].remove(person)
+                mail.sync()
                 if len(args) == 2 :
                     if args[1] == "list" :
                         new = 0
@@ -50,8 +50,8 @@ def main(connection, info, args) :
                             mail[info["sender"].replace("[", "").replace("]", "")]["userorder"].remove(args[2])
                             mail.sync()
                         connection.ircsend(info["sender"], "Message deleted")
-        else : connection.ircsend(info["sender"], "You are not identified correctly!")
-    else : connection.ircsend(info["sender"], "You are not registered!")
+            else : connection.ircsend(info["sender"], "You are not identified correctly!")
+        else : connection.ircsend(info["sender"], "You are not registered!")
     mail.sync()
     mail.close()
 
