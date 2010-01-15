@@ -188,27 +188,28 @@ class sonicbot :
 
     def cleanup(self) :
         """Cleans up various variables after disconnection"""
-        self.cleaningup = True
-        if "logf" in dir(self) : self.logf.close()
-        if "channels" in dir(self) :
-            for channel in self.channels :
-                self.logs[channel].close()
-        if self.host in world.connections.keys() : del world.connections[self.host]
-        if self.host in conf.autoreconnect :
-            self.ssl = conf.ssl[conf.hosts.index(self.host)]
-            conf.ports.pop(conf.hosts.index(self.host))
-            conf.ssl.pop(conf.hosts.index(self.host))
-            conf.hosts.remove(self.host)
-            conf.ssl.append(self.ssl)
-            conf.hosts.append(self.host)
-            conf.ports.append(self.port)
-            newsonicbot = sonicbot()
-            thread.start_new_thread(newsonicbot.start, (self.host, self.port))
-        else :
-            conf.ports.pop(conf.hosts.index(self.host))
-            conf.ssl.pop(conf.hosts.index(self.host))
-            conf.hosts.remove(self.host)
-            del conf.channels[self.host]
+        if not self.cleaningup :
+            self.cleaningup = True
+            if "logf" in dir(self) : self.logf.close()
+            if "channels" in dir(self) :
+                for channel in self.channels :
+                    self.logs[channel].close()
+            if self.host in world.connections.keys() : del world.connections[self.host]
+            if self.host in conf.autoreconnect :
+                self.ssl = conf.ssl[conf.hosts.index(self.host)]
+                conf.ports.pop(conf.hosts.index(self.host))
+                conf.ssl.pop(conf.hosts.index(self.host))
+                conf.hosts.remove(self.host)
+                conf.ssl.append(self.ssl)
+                conf.hosts.append(self.host)
+                conf.ports.append(self.port)
+                newsonicbot = sonicbot()
+                thread.start_new_thread(newsonicbot.start, (self.host, self.port))
+            else :
+                conf.ports.pop(conf.hosts.index(self.host))
+                conf.ssl.pop(conf.hosts.index(self.host))
+                conf.hosts.remove(self.host)
+                del conf.channels[self.host]
 
 
     def on_ACTION(self, info, args) :
