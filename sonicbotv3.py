@@ -33,7 +33,7 @@ class sonicbot :
         
         
     def connect(self) :
-
+        self.cleaningup = False
         
         """Initiates sonicbot after it is connected"""
         try :
