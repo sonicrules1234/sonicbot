@@ -686,6 +686,7 @@ def waitfordata() :
                 else:
                     print "No data, closing the connection"
                     world.instances[connection].cleanup()
+                    connection.close()
         del tempconlist
 
 
