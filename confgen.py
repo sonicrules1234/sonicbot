@@ -20,7 +20,7 @@ if response.lower() in ["yes", "y"] :
     twitpass = raw_input()
 else :
     twituser = ""
-    twituser = ""
+    twitpass = ""
 print "Now we will move on to networks"
 
 networks = {}
@@ -113,7 +113,10 @@ mail_url = ""
 hostignores = []
 twituser = %(twituser)s
 twitpass = %(twitpass)s
-staffchannel = {}"""
+staffchannel = {}
+logdir = "logs"
+modeonjoin = {"": [""]}
+committracker = False"""
 filling = {"vhosts":repr(vhosts), "nick":repr(nick), "owner":repr(owner), "bpass":repr(bpass), "prefix":repr(prefix), "twituser":repr(twituser), "twitpass":repr(twitpass)}
 hosts = networks.keys()
 ports = [networks[host]["port"] for host in hosts]
@@ -141,6 +144,10 @@ try :
     import ssl
     pythonversion = "2.6"
 except : pythonversion = "2.5"
+instances = {}
+rconnections = {}
+waitfordatastarted = False
+conlist = []
 """
 hostnicks = {}
 for host in hosts :
