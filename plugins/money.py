@@ -8,6 +8,6 @@ def main(connection, info, args, world) :
     if len(args) == 1 :
         target = info["sender"]
     if money.has_key(target) :
-        connection.ircsend(info["channel"], "%s has %s dollars." % (target))
+        connection.ircsend(info["channel"], "%s has %s dollars." % (target, str(money[target]["money"])))
     else : connection.ircsend(info["channel"], "No such user %s in my database." % (target))
     
