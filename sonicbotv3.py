@@ -659,7 +659,6 @@ class sonicbot :
         else : self.logs[conf.nick].write(log)
 
 def waitfordata() :
-    givent = False
     while True :
         noerror = False
         tempconlist = world.conlist[:]
@@ -667,13 +666,12 @@ def waitfordata() :
             connections = select.select(tempconlist, [], [], 5)
             noerror = True
         except :
-            if not givent : traceback.print_exc()
-            givent = True
             for network in tempconlist :
                 try :
                     connections = select.select([network], [], [], 0)
                 except :
                     world.instances[network].cleanup()
+                    world.conlist.remove(network)
 
         if noerror :
             for connection in connections[0] :
