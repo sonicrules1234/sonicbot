@@ -558,7 +558,7 @@ class sonicbot :
             notacommand2 = False
             if self.factoids.has_key(info["message"][1:]) :
                 self.ircsend(info["channel"], self.factoids[info["message"][1:]])
-            elif " | " in info["message"]:
+            elif " | " in info["message"] and args[1] not in self.plugins["pluginlist"].pluginlist:
                 if self.factoids.has_key(info["message"].split(" | ")[0][1:]) and info["message"].split(" | ", 1)[1].strip() and info["sender"] != info["channel"] :
                     if info["message"].split(" | ", 1)[1].strip() in self.channels[info["channel"]] :
                         self.ircsend(info["channel"], "%s: %s" % (info["message"].split(" | ", 1)[1].strip(), self.factoids[info["message"].split(" | ")[0][1:]]))
