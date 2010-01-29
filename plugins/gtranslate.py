@@ -1,4 +1,4 @@
-import translate
+import translate, htmlentitydefs
 arguments = ["self", "info", "args"]
 helpstring = "gtranslate <from> <to> <phrase>"
 minlevel = 1

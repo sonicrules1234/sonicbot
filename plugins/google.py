@@ -1,4 +1,4 @@
-import urllib, urllib2, re
+import urllib, urllib2, re, htmlentitydefs
 arguments = ["self", "info", "args"]
 helpstring = "google <result #> <query>"
 minlevel = 1

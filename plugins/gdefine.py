@@ -1,3 +1,4 @@
+import htmlentitydefs
 arguments = ["self", "info", "args"]
 minlevel = 1
 helpstring = "gdefine <phrase>"
