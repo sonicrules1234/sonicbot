@@ -1,8 +1,10 @@
 
 import shelve
 def main(connection, info, conf) :
-    if info["sender"] in conf.admin.keys() :
-        if info["hostname"] in conf.admin[info["sender"]] :
+    if info["sender"] in conf.admin.keys() :
+
+        if info["hostname"] in conf.admin[info["sender"]] :
+
             if connection.host in conf.modeonjoin.keys() :
                 for mode in conf.modeonjoin[connection.host] :
                     connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
@@ -15,7 +17,7 @@ def main(connection, info, conf) :
                if person not in newsenders and messaget[1] : newsenders.append(person)
         if len(newsenders) > 0 :
             connection.ircsend(info["sender"], "You have new message(s) from %s" % (", ".join(newsenders)))
-    if info["channel"] in conf.welcomechans : connection.ircsend(info["channel"], "Welcome to %s, %s" % (info["channel"], info["sender"]))
+    if info["channel"] in conf.welcomechans and info["sender"] != conf.nick : connection.ircsend(info["channel"], "Welcome to %s, %s" % (info["channel"], info["sender"]))
     info["sender"] = info["sender"].lower()
     notify = shelve.open("notify.db", writeback=True)
     if info["sender"] in notify.keys() :
