@@ -574,8 +574,9 @@ class sonicbot :
                             self.plugins[args[0]].main(*arguments)
                         else : self.ircsend(info["channel"], "%s: You do not have a high enough user level and/or privleges in this channel to use that command!" % (info["sender"]))
                     else : self.ircsend(info["channel"], "That plugin is not enabled in this channel.  To enable it, use ;enable %s" % (args[0]))
-                except: 
-                    traceback.print_exc()
+                except:
+                    world.error = traceback.format_exc()
+                    print world.error
                     self.ircsend(info["channel"], "Error.  The syntax for that command is: %s" % (eval("self.plugins['%s'].helpstring" % (args[0]))))
             elif notacommand or notacommand2 :
                 pass
