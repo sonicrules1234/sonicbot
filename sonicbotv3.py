@@ -34,7 +34,7 @@ class sonicbot :
         
     def connect(self) :
         self.cleaningup = False
-        
+        self.error = ""
         """Initiates sonicbot after it is connected"""
         try :
             if conf.bpass != "" : self.rawsend("PASS %s\n" % (conf.bpass))
@@ -575,8 +575,8 @@ class sonicbot :
                         else : self.ircsend(info["channel"], "%s: You do not have a high enough user level and/or privleges in this channel to use that command!" % (info["sender"]))
                     else : self.ircsend(info["channel"], "That plugin is not enabled in this channel.  To enable it, use ;enable %s" % (args[0]))
                 except:
-                    world.error = traceback.format_exc()
-                    print world.error
+                    self.error = traceback.format_exc()
+                    print self.error
                     self.ircsend(info["channel"], "Error.  The syntax for that command is: %s" % (eval("self.plugins['%s'].helpstring" % (args[0]))))
             elif notacommand or notacommand2 :
                 pass
