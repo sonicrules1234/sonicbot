@@ -3,6 +3,7 @@ helpstring = "destroy <multiple>"
 minlevel = 3
 
 def main(connection, info, args, conf) :
+    """Devoices all non-admins in the channel"""
     count = 0
     userlist = []
     for user in connection.channels[info["channel"]] :

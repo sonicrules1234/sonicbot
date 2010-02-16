@@ -3,6 +3,7 @@ minlevel = 3
 helpstring = "enable <plugin>"
 
 def main(connection, info, args) :
+    """Enables a plugin"""
     if args[1] not in ["disable", "enable", "*"] :
         if args[1] not in connection.users["channels"][info["channel"]]["enabled"] :
             connection.users["channels"][info["channel"]]["enabled"].append(args[1])

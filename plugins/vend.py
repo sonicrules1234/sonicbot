@@ -4,6 +4,7 @@ helpstring = "vend <topic #>"
 minlevel = 3
 
 def main(connection, info, args, world) :
+    """Ends a vote and returns the results"""
     votes = shelve.open("votes.db", writeback=True)
     if votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["started"] :
         connection.ircsend(info["channel"], "The vote on '%s' has ended.  Here are the stats:" % (votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["topic"]))

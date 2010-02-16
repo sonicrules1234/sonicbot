@@ -100,6 +100,7 @@ class sonicbot :
             world.waitfordatastarted = True
 
     def start(self, host, port) :
+        """Starts the preparation for connecting"""
         self.counter = 0
         error = False
         self.unittest = False
@@ -370,6 +371,7 @@ class sonicbot :
             self.plugins["on_INVITE"].main(self, info, conf)
             
     def on_353(self, info) :
+        """Generates a list of nicks in the channel, also tries to see what modes they have."""
         try :
             for nick in info["words"][5:] :
                 if nick != "" :
@@ -660,6 +662,7 @@ class sonicbot :
         else : self.logs[conf.nick].write(log)
 
 def waitfordata() :
+    """Actual loop of waiting for data and parsing it"""
     while True :
         noerror = False
         tempconlist = world.conlist[:]

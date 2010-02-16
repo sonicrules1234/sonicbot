@@ -3,6 +3,7 @@ helpstring = "chanreg"
 minlevel = 2
 
 def main(connection, info, args) :
+    """Registers a channel with sonicbot"""
     if auth(connection, info) : 
         if connection.users["users"][info["sender"]]["userlevel"] == 2 :
             connection.users["users"][info["sender"]]["userlevel"] = 3
@@ -20,6 +21,7 @@ def main(connection, info, args) :
     else : connection.ircsend(info["channel"], "%s: You do not have at least half-ops on this channel.  If this is an error, please kick me and invite me again." % (info["sender"]))
 
 def auth(connection, info) :
+    """Checks to see if the sender has at least half-ops in the channel"""
     for mode in connection.chanmodes[info["channel"]][info["sender"]] :
         if mode in ["!", "~", "@", "%", "&"] :
             return True

@@ -4,6 +4,7 @@ helpstring = "dns <IP or domain name>"
 minlevel = 1
 
 def main(connection, info, args) :    
+    """Displays the path of the dns of the specified host"""
     connection.ircsend(info["channel"], lookup(args[1]))
 
 def lookup(data, v=4) :

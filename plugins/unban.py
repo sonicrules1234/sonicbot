@@ -2,6 +2,7 @@ helpstring = "unban <nick>"
 arguments = ["self", "info", "args"]
 minlevel = 3
 def main(connection, info, args) :
+    """Unbans a user"""
     if args[1] in connection.nicks.keys() :
         target = "*!*@%s" % (connection.nicks[args[1]])
     else : target = "%s*!*@*" % (args[1])

@@ -4,6 +4,7 @@ minlevel = 4
 helpstring = "mailman <command> <message/nick>"
 
 def main(connection, info, args, conf) :
+    """Manages sonicmail"""
     mail = shelve.open("mail.db", writeback=True)
     if args[1] == "delete" :
         if mail.has_key(args[2].replace("[", "").replace("]", "")) :

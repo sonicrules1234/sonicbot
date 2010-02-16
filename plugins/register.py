@@ -3,6 +3,7 @@ arguments = ["self", "info", "args", "conf"]
 minlevel = 4
 helpstring = "register <nick>"
 def main(connection, info, args, conf) :
+    """Registers a nick to sonicmail"""
     mail = shelve.open("mail.db")
     timet = str(int(time.time()))
     temp = {}

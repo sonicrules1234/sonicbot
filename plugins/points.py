@@ -4,6 +4,7 @@ minlevel = 1
 helpstring = "points [nick] [+/-number] or points [+/-]list or points -flush"
 maxperday = 2
 def main(connection, info, args) :
+    """Gives/lists/takes points"""
     points = shelve.open("points.db", writeback=True)
     if not points.has_key("users") :
         points["users"] = {}

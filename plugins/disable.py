@@ -3,6 +3,7 @@ minlevel = 3
 helpstring = "disable <plugin>"
 
 def main(connection, info, args) :
+    """Disables a plugin"""
     if args[1] not in ["disable", "enable", "*"] :
         if args[1] in connection.users["channels"][info["channel"]]["enabled"] :
             connection.users["channels"][info["channel"]]["enabled"].remove(args[1])

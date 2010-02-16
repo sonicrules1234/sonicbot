@@ -3,6 +3,7 @@ helpstring = "revive <multiple>"
 minlevel = 3
 
 def main(connection, info, args, conf) :
+    """Voices everybody in the channel"""
     count = 0
     userlist = []
     for user in connection.channels[info["channel"]] :

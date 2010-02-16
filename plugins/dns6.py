@@ -4,6 +4,7 @@ helpstring = "dns6 <IP or domain name>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Returns the dns path using IPv6"""
     connection.ircsend(info["channel"], lookup(args[1], 6))
 
 def lookup(data, v=4) :

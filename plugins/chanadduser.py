@@ -3,6 +3,7 @@ helpstring = "chanadduser <nick>"
 minlevel = 3
 
 def main(connection, info, args) :
+    """Adds a user to the channel sonicbot access list"""
     if args[1] in connection.users["users"] :
         if connection.users["users"][args[1]]["userlevel"] >= 2 :
             if connection.users["users"][args[1]]["userlevel"] == 2 :

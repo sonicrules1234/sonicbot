@@ -1,5 +1,6 @@
 import shelve, time
 def main(connection, info, conf) :
+    """Run every time a message is seen"""
     if info["sender"] == "OperServ" :
         words = info["message"].split(" ")
         if words[0] == "REGISTER:" :
@@ -115,6 +116,7 @@ def main(connection, info, conf) :
     notify.close()
 
 def happiness_detect(info) :
+    """Checks to see if a smiley is in the message"""
     for emotion in [":)", ":D", "C:", "=D", "=)", "C=", "(=", "(:" "xD", ":p", ";p", "=p", ":(", "D:", "=(", "D=", "):", ")=", "=C", ":C", ":P"] :
         if emotion in info["message"] : return True
     return False

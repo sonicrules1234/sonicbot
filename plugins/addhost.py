@@ -4,6 +4,7 @@ helpstring = "addhost <password>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Adds the senders host to his/her account"""
     if info["sender"] in connection.users["users"].keys() :
         if hashlib.sha512(args[1]).hexdigest() == connection.users["users"][info["sender"]]["password"] and connection.nicks[info["sender"]] not in connection.users["users"][info["sender"]]["hostname"] :
             connection.users["users"][info["sender"]]["hostname"].append(connection.nicks[info["sender"]])

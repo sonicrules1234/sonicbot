@@ -4,6 +4,7 @@ helpstring = "vote <topic #> <choice #>"
 minlevel = 1
 
 def main(connection, info, args, world) :
+    """Lets user vote"""
     votes = shelve.open("votes.db", writeback=True)
     if votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["started"] :
         if info["sender"] not in votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["voters"] :

@@ -1,6 +1,7 @@
 
 import shelve
 def main(connection, info, conf) :
+    """Runs every time sonicbot sees somebody join a channel"""
     if info["sender"] in conf.admin.keys() :
 
         if info["hostname"] in conf.admin[info["sender"]] :

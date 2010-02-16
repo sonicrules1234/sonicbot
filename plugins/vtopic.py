@@ -4,6 +4,7 @@ helpstring = "vtopic <topic>"
 minlevel = 3
 
 def main(connection, info, args, world) :
+    """Sets the topic of a vote"""
     votes = shelve.open("votes.db", writeback=True)
     if not votes.has_key("networks") :
         votes["networks"] = {world.hostnicks[connection.host]:[]}

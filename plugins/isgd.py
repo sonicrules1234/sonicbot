@@ -4,6 +4,7 @@ helpstring = "isgd <url>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Generates a short url or translates a short url to the original one"""
     connection.ircsend(info["channel"], "%s: %s" % (info["sender"], getnewurl(args[1])))
 
 def real2isgd(url) :

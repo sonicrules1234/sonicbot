@@ -5,6 +5,7 @@ helpstring = "ebaytracker <title> <feed url> <on/off>"
 minlevel = 3
 
 def main(connection, info, args, conf, world, thread) :
+    """Starts the loop of checking the page for a change in price"""
     feedurl = args[-2]
     onoff = args[-1]
     title = " ".join(args[1:-2])
@@ -38,6 +39,7 @@ def main(connection, info, args, conf, world, thread) :
             else : connection.ircsend(info["channel"], "No such item being tracked.")
     else : connection.ircsend(info["channel"], "That is not a valid ebay url")
 def get_feed(connection, info, args, feedurl, world, indexnum, title) :
+    """Checks for a change in the price on the page"""
     while world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
         feeds = shelve.open("feeds-%s.db" % (world.hostnicks[connection.host]), writeback=True)
         good = urllib.urlopen(feedurl).read()

@@ -1,4 +1,5 @@
 def main(connection, info, conf) :
+    """Run every time somebody changes nicks"""
     if ":" in info["words"][2] :
         newnick = info["words"][2][1:]
     else : newnick = info["words"][2]

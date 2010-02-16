@@ -4,6 +4,7 @@ helpstring = "committracker <git url> <stop/start>"
 minlevel = 5
 
 def main(connection, info, args) :
+    """Adds/removes a notification to the channel when a commit is seen"""
     commits = shelve.open("commits.db", writeback=True)
     if not commits.has_key("networks") :
         commits["networks"] = {}

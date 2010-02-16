@@ -4,6 +4,7 @@ minlevel = 1
 helpstring = "gdefine <phrase>"
 
 def main(connection, info, args) :
+    """Defines a word or phrase using google"""
     connection.ircsend(info["channel"], "%s: %s" % (info["sender"], partfilter(gdefine(" ".join(args[1:])))))
 
 def gdefine(word):

@@ -4,6 +4,7 @@ helpstring = "report <nick> <channel> <priority of low, medium, or high> <reason
 minlevel = 1
 
 def main(connection, info, args, world, conf) :
+    """Makes a report."""
     reports = shelve.open("reports-%s.db" % (world.hostnicks[connection.host]), writeback=True)
     if not reports.has_key("reports") :
         reports["reports"] = []

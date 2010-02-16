@@ -3,6 +3,7 @@ arguments = ["self", "info", "args"]
 minlevel = 1
 helpstring = "bday <MM/DD/YYYY>"
 def main(connection, info, args) :
+    """Calculates the number of days until the user's birthday"""
     birthd = args[1]
     error = 0
     error2 = 0

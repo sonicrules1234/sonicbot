@@ -4,6 +4,7 @@ helpstring = "vstart <topic id>"
 minlevel = 3
 
 def main(connection, info, args, world) :
+    """Starts a vote"""
     votes = shelve.open("votes.db", writeback=True)
     if not votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["started"] :
         votes["networks"][world.hostnicks[connection.host]][int(args[1]) - 1]["started"] = True

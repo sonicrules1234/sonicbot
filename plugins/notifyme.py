@@ -4,6 +4,7 @@ arguments = ["self", "info", "args"]
 minlevel = 1
 
 def main(connection, info, args) :
+    """Stores data to notify the sender when the specified nick does something"""
     args = [x.lower() for x in args]
     notify = shelve.open("notify.db", writeback=True)
     if args[1] not in notify.keys() :

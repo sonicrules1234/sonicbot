@@ -4,6 +4,7 @@ helpstring = "nickreg <password>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Registers the sender with sonicbot"""
     if connection.users["users"][info["sender"]]["userlevel"] == 1 :
         connection.users["users"][info["sender"]] = {"password":hashlib.sha512(args[1]).hexdigest(), "hostname":[connection.nicks[info["sender"]]], "userlevel":2}
         connection.users.sync()

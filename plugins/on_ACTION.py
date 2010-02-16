@@ -1,5 +1,6 @@
 import shelve, time, random
 def main(connection, info, conf) :
+    """Runs every time somebody does an action (/me)"""
     badwords = shelve.open("badwords.db", writeback=True)
     if badwords.has_key(connection.host) :
         if badwords[connection.host].has_key(info["channel"]) :

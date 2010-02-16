@@ -4,6 +4,7 @@ helpstring = "gtranslate <from> <to> <phrase>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Translates using google translate"""
     connection.ircsend(info["channel"], '%s: "%s"' % (info["sender"], partfilter(translate.translate(args[1], args[2], " ".join(args[3:])).encode("utf-8"))))
     
 def partfilter(inputtext) :

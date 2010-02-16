@@ -5,6 +5,7 @@ helpstring = "mood <nick>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Returns the mood of the specified user"""
     emotions = shelve.open("emotions.db")
     person = args[1].lower()
     if person in emotions.keys() :

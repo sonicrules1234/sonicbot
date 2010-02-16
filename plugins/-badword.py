@@ -4,6 +4,7 @@ helpstring = "-badword <word>"
 minlevel = 3
 
 def main(connection, info, args) :
+    """Removes a word from the bad word list"""
     badwords = shelve.open("badwords.db", writeback=True)
     if not badwords.has_key(connection.host) :
         badwords[connection.host] = {}

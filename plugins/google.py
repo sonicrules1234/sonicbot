@@ -3,6 +3,7 @@ arguments = ["self", "info", "args"]
 helpstring = "google <result #> <query>"
 minlevel = 1
 def main(connection, info, args) :
+    """Googles the query"""
     if args[1].isdigit() :
         params = urllib.urlencode({'start' : args[1], 'q': " ".join(args[2:])})
         request = urllib2.Request("http://google.com/search?%s" % (params))

@@ -5,6 +5,7 @@ helpstring = "seen <nick>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Calculates the amount of time it has been since the specified nick was last seen."""
     seendb = shelve.open("seen.db", writeback=True)
     if seendb["users"].has_key(args[1].lower()) :
         now = time.time()
@@ -25,6 +26,7 @@ def main(connection, info, args) :
     else : connection.ircsend(info["channel"], "I have never seen %s before." % (args[1]))
 
 def gettimestring(passed) :
+    """Generates the appropriate string from the generated length of time"""
     timestring = ""
     for unit in ["weeks", "days", "hours", "minutes", "seconds"] :
         if unit != "seconds" and passed[unit] != 0 :
@@ -35,6 +37,7 @@ def gettimestring(passed) :
     return timestring
 
 def makeint(number) :
+    """Rounds the number"""
     rounded = int(round(number))
     if rounded > number :
         returnval = rounded - 1
