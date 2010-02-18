@@ -18,6 +18,7 @@ def main(connection, info, conf) :
                if person not in newsenders and messaget[1] : newsenders.append(person)
         if len(newsenders) > 0 :
             connection.ircsend(info["sender"], "You have new message(s) from %s" % (", ".join(newsenders)))
+    mail.close()
     if info["channel"] in conf.welcomechans and info["sender"] != conf.nick : connection.ircsend(info["channel"], "Welcome to %s, %s" % (info["channel"], info["sender"]))
     info["sender"] = info["sender"].lower()
     notify = shelve.open("notify.db", writeback=True)
