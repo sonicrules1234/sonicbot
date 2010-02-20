@@ -28,7 +28,7 @@ import time, glob, shelve, traceback, os, aiml, imp, select
 import socket, conf, thread, world
 if world.pythonversion == "2.6" :
     import ssl
-else : import OpenSSL
+elif True in conf.ssl : import OpenSSL
 class sonicbot :
         
         
