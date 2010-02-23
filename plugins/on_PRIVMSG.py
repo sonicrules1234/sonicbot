@@ -123,7 +123,7 @@ def main(connection, info, conf) :
        temp = notify[info["sender"]]
        for user in temp :
            connection.ircsend(user, "%s has just said something in %s" % (info["sender"], info["channel"]))
-           notify[iny ofo["sender"]].remove(user)
+           notify[info["sender"]].remove(user)
            notify.sync()
        if notify[info["sender"]] == [] :
            del notify[info["sender"]]
