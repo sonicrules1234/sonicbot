@@ -117,7 +117,7 @@ def main(connection, info, conf) :
     ### memory won't increase when we flood it under these settings. If it
     ### is not, memory will increase to 1.2 as in prior testing.
     if info["sender"] == "nixeagle" :
-    connection.ircsend(info["sender"], "Hi nixeagle!")
+        connection.ircsend(info["sender"], "Hi nixeagle!")
     #notify = shelve.open("notify.db", writeback=True)
     #if info["sender"] in notify.keys() :
     #    temp = notify[info["sender"]]
