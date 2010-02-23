@@ -116,8 +116,8 @@ def main(connection, info, conf) :
     ### that shelve itself is the cause of our memoryleaks. If it is, then
     ### memory won't increase when we flood it under these settings. If it
     ### is not, memory will increase to 1.2 as in prior testing.
-    if info["sender"] == "nixeagle" :
-    connection.ircsend(info["sender"], "Hi nixeagle!")
+    # if info["sender"] == "nixeagle" :
+    # connection.ircsend(info["sender"], "Hi nixeagle!")
     #notify = shelve.open("notify.db", writeback=True)
     #if info["sender"] in notify.keys() :
     #    temp = notify[info["sender"]]
