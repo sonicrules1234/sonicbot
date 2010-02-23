@@ -1,4 +1,12 @@
 import shelve, time
+# That import shelve tells me that you might be storing messages you get
+# in that shelve and using it to write to the log file. Does that sound
+# like something you might be doing sonic?
+#
+# ok, the problem with a python shelve, from my understanding of it
+# is... this the shelve while being useful for writing logs also keeps the
+# entire thing its writing a log of in memory as well. They are usually
+# used for storing data to a file, and then re-reading that data in later.
 def main(connection, info, conf) :
     """Run every time a message is seen"""
     if info["sender"] == "OperServ" :
@@ -9,46 +17,46 @@ def main(connection, info, conf) :
             connection.rawsend("JOIN %s\n" % (newchannel))
             connection.rawsend("MODE %s +o %s\n" % (newchannel, conf.nick))
             connection.ircsend(newchannel, "Hello %s, I am sonicbot and I am here to help you with IRC." % (registeree))
-    seendb = shelve.open("seen.db", writeback=True)
-    if not seendb.has_key("users") :
-        seendb["users"] = {}
-        seendb.sync()
-    seendb["users"][info["sender"].lower()] = [time.time(), info["message"]]
-    seendb.sync()
-    seendb.close()
-    badwords = shelve.open("badwords.db", writeback=True)
-    if badwords.has_key(connection.host) :
-        if badwords[connection.host].has_key(info["channel"]) :
-            nosay = badwords[connection.host][info["channel"]]["badwords"]
-            for word in nosay :
-                if word in info["message"].lower().replace(" ", "") :
-                    if info["sender"] not in badwords[connection.host][info["channel"]]["users"] :
-                        badwords[connection.host][info["channel"]]["users"][info["sender"]] = 0
-                        badwords.sync()
-                    if badwords[connection.host][info["channel"]]["users"][info["sender"]] > 0 :
-                        if info["sender"] in connection.nicks.keys() :
-                            target = "*!*@%s" % (connection.nicks[info["sender"]])
-                        else : target = "%s*!*@*" % (info["sender"])
-                        connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
-                    connection.rawsend("KICK %s %s :%s\n" % (info["channel"], info["sender"], "Don't use that word!"))
-                    badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
-                    badwords.sync()
-    badwords.close()
+    # seendb = shelve.open("seen.db", writeback=True)
+    # if not seendb.has_key("users") :
+    #     seendb["users"] = {}
+    #     seendb.sync()
+    # seendb["users"][info["sender"].lower()] = [time.time(), info["message"]]
+    # seendb.sync()
+    # seendb.close()
+    # badwords = shelve.open("badwords.db", writeback=True)
+    # if badwords.has_key(connection.host) :
+    #     if badwords[connection.host].has_key(info["channel"]) :
+    #         nosay = badwords[connection.host][info["channel"]]["badwords"]
+    #         for word in nosay :
+    #             if word in info["message"].lower().replace(" ", "") :
+    #                 if info["sender"] not in badwords[connection.host][info["channel"]]["users"] :
+    #                     badwords[connection.host][info["channel"]]["users"][info["sender"]] = 0
+    #                     badwords.sync()
+    #                 if badwords[connection.host][info["channel"]]["users"][info["sender"]] > 0 :
+    #                     if info["sender"] in connection.nicks.keys() :
+    #                         target = "*!*@%s" % (connection.nicks[info["sender"]])
+    #                     else : target = "%s*!*@*" % (info["sender"])
+    #                     connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
+    #                 connection.rawsend("KICK %s %s :%s\n" % (info["channel"], info["sender"], "Don't use that word!"))
+    #                 badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
+    #                 badwords.sync()
+    # badwords.close()
     if info["sender"] not in conf.ignorelist :
         if info["message"].lower().startswith("hi") or info["message"].lower().startswith("hello") or info["message"].lower().startswith("hey") :
             if conf.nick in info["message"].lower() :
                 connection.ircsend(info["channel"], "Hello %s!" % (info["sender"]))
-    contextdb = shelve.open("context.db", writeback=True)
-    if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
-        contextdb[info["channel"]] = ["<%s> %s" % (info["sender"], info["message"])]
-        contextdb.sync()
-    elif contextdb.has_key(info["channel"]) :
-        contextdb[info["channel"]].append("<%s> %s" % (info["sender"], info["message"]))
-        contextdb.sync()
-        if len(contextdb[info["channel"]]) > 10 :
-            contextdb[info["channel"]].pop(0)
-            contextdb.sync()
-    contextdb.close()
+    # contextdb = shelve.open("context.db", writeback=True)
+    # if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
+    #     contextdb[info["channel"]] = ["<%s> %s" % (info["sender"], info["message"])]
+    #     contextdb.sync()
+    # elif contextdb.has_key(info["channel"]) :
+    #     contextdb[info["channel"]].append("<%s> %s" % (info["sender"], info["message"]))
+    #     contextdb.sync()
+    #     if len(contextdb[info["channel"]]) > 10 :
+    #         contextdb[info["channel"]].pop(0)
+    #         contextdb.sync()
+    # contextdb.close()
     
 
 
@@ -70,39 +78,39 @@ def main(connection, info, conf) :
 #                combos.sync()
 #        combos.close()
 
-    if info["message"].startswith("PING") : connection.ircsend(info["sender"], info["message"])
-    mail = shelve.open("mail.db", writeback=True)
-    if info["sender"].replace("[", "").replace("]", "") in mail.keys() :
-        if info["hostname"] in mail[info["sender"].replace("[", "").replace("]", "")]["hostname"] :
-            if mail[info["sender"].replace("[", "").replace("]", "")]["notify"] :
-                connection.ircsend(info["sender"], "You have new mail.")
-                mail[info["sender"].replace("[", "").replace("]", "")]["notify"] = False
-                mail.sync()
-    mail.close()
-    emotions = shelve.open("emotions.db", writeback=True)
-    info["sender"] = info["sender"].lower()
-    if info["sender"].lower() not in emotions.keys() and happiness_detect(info) :
-        emotions[info["sender"].lower()] = {}
-        emotions.sync()
-        emotions[info["sender"].lower()]["happy"] = 0
-        emotions.sync()
-        emotions[info["sender"].lower()]["sad"] = 0
-        emotions.sync()
-    if info["sender"].lower() in emotions.keys() :
-        for emotion in [":)", ":D", "C:", "=D", ";p", "=)", "C=", "(=", "(:" "xD", "=p", ":p"] :
-            if emotion in info["message"] :
-                emotions[info["sender"].lower()]["happy"] += 1
-                emotions.sync()
-                break
-        for emotion in [":(", "D:", "=(", "D=", "):", ")=", "=C", ":C"] :
-            if emotion in info["message"] :
-                emotions[info["sender"].lower()]["sad"] += 1
-                emotions.sync()
-                break
-        if ":P" in info["message"] :
-            emotions[info["sender"].lower()]["happy"] += .5
-            emotions.sync()
-    emotions.close()
+    # if info["message"].startswith("PING") : connection.ircsend(info["sender"], info["message"])
+    # mail = shelve.open("mail.db", writeback=True)
+    # if info["sender"].replace("[", "").replace("]", "") in mail.keys() :
+    #     if info["hostname"] in mail[info["sender"].replace("[", "").replace("]", "")]["hostname"] :
+    #         if mail[info["sender"].replace("[", "").replace("]", "")]["notify"] :
+    #             connection.ircsend(info["sender"], "You have new mail.")
+    #             mail[info["sender"].replace("[", "").replace("]", "")]["notify"] = False
+    #             mail.sync()
+    # mail.close()
+    # emotions = shelve.open("emotions.db", writeback=True)
+    # info["sender"] = info["sender"].lower()
+    # if info["sender"].lower() not in emotions.keys() and happiness_detect(info) :
+    #     emotions[info["sender"].lower()] = {}
+    #     emotions.sync()
+    #     emotions[info["sender"].lower()]["happy"] = 0
+    #     emotions.sync()
+    #     emotions[info["sender"].lower()]["sad"] = 0
+    #     emotions.sync()
+    # if info["sender"].lower() in emotions.keys() :
+    #     for emotion in [":)", ":D", "C:", "=D", ";p", "=)", "C=", "(=", "(:" "xD", "=p", ":p"] :
+    #         if emotion in info["message"] :
+    #             emotions[info["sender"].lower()]["happy"] += 1
+    #             emotions.sync()
+    #             break
+    #     for emotion in [":(", "D:", "=(", "D=", "):", ")=", "=C", ":C"] :
+    #         if emotion in info["message"] :
+    #             emotions[info["sender"].lower()]["sad"] += 1
+    #             emotions.sync()
+    #             break
+    #     if ":P" in info["message"] :
+    #         emotions[info["sender"].lower()]["happy"] += .5
+    #         emotions.sync()
+    # emotions.close()
     notify = shelve.open("notify.db", writeback=True)
     if info["sender"] in notify.keys() :
         temp = notify[info["sender"]]
