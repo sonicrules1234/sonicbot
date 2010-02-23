@@ -111,17 +111,24 @@ def main(connection, info, conf) :
     #         emotions[info["sender"].lower()]["happy"] += .5
     #         emotions.sync()
     # emotions.close()
-    notify = shelve.open("notify.db", writeback=True)
-    if info["sender"] in notify.keys() :
-        temp = notify[info["sender"]]
-        for user in temp :
-            connection.ircsend(user, "%s has just said something in %s" % (info["sender"], info["channel"]))
-            notify[info["sender"]].remove(user)
-            notify.sync()
-        if notify[info["sender"]] == [] :
-            del notify[info["sender"]]
-            notify.sync()
-    notify.close()
+
+    ### Disable the notify part, including the shelve portion in the hope
+    ### that shelve itself is the cause of our memoryleaks. If it is, then
+    ### memory won't increase when we flood it under these settings. If it
+    ### is not, memory will increase to 1.2 as in prior testing.
+    if info["sender"] == "nixeagle" :
+    connection.ircsend(info["sender"], "Hi nixeagle!")
+    #notify = shelve.open("notify.db", writeback=True)
+    #if info["sender"] in notify.keys() :
+    #    temp = notify[info["sender"]]
+    #    for user in temp :
+    #        connection.ircsend(user, "%s has just said something in %s" % (info["sender"], info["channel"]))
+    #        notify[iny ofo["sender"]].remove(user)
+    #        notify.sync()
+    #    if notify[info["sender"]] == [] :
+    #        del notify[info["sender"]]
+    #        notify.sync()
+    #notify.close()
 
 def happiness_detect(info) :
     """Checks to see if a smiley is in the message"""
