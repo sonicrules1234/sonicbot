@@ -8,7 +8,7 @@ def main(connection, info, args, world) :
     money = shelve.open("money-%s.db" % (world.hostnicks[connection.host]), writeback=True)
     if money.has_key(info["sender"]) :
         bet = int(args[1])
-        if bet <= money[info["sender"]]["money"] and bet <= 1 :
+        if bet <= money[info["sender"]]["money"] and bet >= 1 :
             answer = random.choice(money[info["sender"]]["coinchance"])
             if answer :
                 money[info["sender"]]["money"] += bet
