@@ -8,4 +8,4 @@ def main(connection, info, args) :
     if args[1] == "encode" :
         connection.ircsend(info["channel"], "%s: %s" % (info["sender"], base64.b64encode(" ".join(args[2:]))))
     elif args[1] == "decode" :
-        connection.ircsend(info["channel"], "%s: %s" % (info["sender"], base64.b64decode(args[2])))
+        connection.ircsend(info["channel"], "%s: %s" % (info["sender"], base64.b64decode(args[2]).replace("\n", "").replace("\r", "")))
