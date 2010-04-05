@@ -1,5 +1,5 @@
 import imp
-pyipinfodb = imp.load_source("pyipinfodb/pyipinfodb.py", "pyipinfodb")
+pyipinfodb = imp.load_source("pyipinfodb", "pyipinfodb/pyipinfodb.py")
 arguments = ["self", "info", "args"]
 helpstring = "geoip <IP or hostname>"
 minlevel = 1
