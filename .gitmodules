@@ -1,0 +1,3 @@
+[submodule "pyipinfodb"]
+	path = pyipinfodb
+	url = git://github.com/sonicrules1234/pyipinfodb.git
