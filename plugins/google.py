@@ -10,7 +10,7 @@ def main(connection, info, args) :
         request.add_header('User-Agent', 'Opera/9.80 (Windows NT 6.1; U; en) Presto/2.2.15 Version/10.00')
         f = urllib2.urlopen(request)
         source = f.read()
-        resultlist = re.findall(r'<h3 class=r><a href="(http://.+?)"', source)
+        resultlist = re.findall(r'<h3 class="r"><a href="(http://.+?)"', source)
         resultlist2 = re.findall(r'<div class="s">(.+?)<br>', source)
         connection.ircsend(info["channel"], "%s - %s" % (resultlist[0], partfilter(resultlist2[0].replace("<em>", "\x02").replace("</em>", "\x02").replace("<b>", "\x02").replace("</b>", "\x02"))))
 def partfilter(inputtext) :
