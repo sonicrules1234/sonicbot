@@ -26,11 +26,11 @@ def main(connection, info, args, conf, world, thread) :
             if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
                 world.feeds[connection.host][info["channel"]][feedurl].append(True)
                 indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-                thread.startnewthread(getfeed, (connection, info, args, feedurl, world, indexnum, title))
+                thread.start_new_thread(getfeed, (connection, info, args, feedurl, world, indexnum, title))
             elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
                 world.feeds[connection.host][info["channel"]][feedurl].append(True)
                 indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-                thread.startnewthread(getfeed, (connection, info, args, feedurl, world, indexnum, title))
+                thread.start_new_thread(getfeed, (connection, info, args, feedurl, world, indexnum, title))
             else : connection.ircsend(info["channel"], "That item is already being tracked.")
         elif onoff == "off" :
             if feedurl in world.feeds[connection.host][info["channel"]].keys() :
