@@ -14,4 +14,4 @@ pluginlist.sort()
 
 def main(connection, info, args) :
     """Lists available plugins"""
-    connection.ircsend(info["channel"], "The available plugins are %(listofplugins)s") % dict(listofplugins=", ".join([x for x in pluginlist if x in connection.users["channels"][info["channel"]]["enabled"]]))
+    connection.ircsend(info["channel"], "The available plugins are %(listofplugins)s" % dict(listofplugins=", ".join([x for x in pluginlist if x in connection.users["channels"][info["channel"]]["enabled"]])))
