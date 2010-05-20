@@ -17,11 +17,11 @@ def main(connection, info, args, conf, world, thread) :
             feeds[feedurl]["updated"] = 0
             feeds.sync()
             feeds.close()
-            if not world.feeds.haskey(connection.host) :
+            if not world.feeds.has_key(connection.host) :
                 world.feeds[connection.host] = {}
-            if not world.feeds[connection.host].haskey(info["channel"]) :
+            if not world.feeds[connection.host].has_key(info["channel"]) :
                 world.feeds[connection.host][info["channel"]] = {}
-            if not world.feeds[connection.host][info["channel"]].haskey(feedurl) :
+            if not world.feeds[connection.host][info["channel"]].has_key(feedurl) :
                 world.feeds[connection.host][info["channel"]][feedurl] = []
             if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
                 world.feeds[connection.host][info["channel"]][feedurl].append(True)
