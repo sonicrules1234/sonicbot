@@ -2,7 +2,7 @@ connections = {}
 hostcount = 0
 feeds = {}
 relay_channels = []
-hostnicks = {}
+hostnicks = {"irc.sonicbot.org":"vbirc"}
 try :
     import ssl
     pythonversion = "2.6"

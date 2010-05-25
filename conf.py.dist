@@ -1,11 +1,11 @@
-hosts = [""]
+hosts = ["irc.sonicbot.org"]
 ports = [6667]
 ssl = [False]
 ipv6 = [False]
 ident = ""
 committracker = False
 nick = ident
-channels = {"":["#sonicbot"]}
+channels = {"irc.sonicbot.org":["#sonicbot"]}
 autoreconnect = []
 realname = nick
 connectcommands = {}
