@@ -1,5 +1,5 @@
 import shelve, time
-arguments = ["connection", "info", "args"]
+arguments = ["self", "info", "args"]
 minlevel = 1
 helpstring = "quote <quote #>"
 
