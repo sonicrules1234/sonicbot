@@ -8,7 +8,7 @@ def main(connection, info, args) :
     if not qdb.has_key("quotes") :
         qdb["quotes"] = []
         qdb.sync()
-    qdb.append({"quote":" ".join(args[1:]), "time":time.time(), "method":"IRC", "info":info, "deleted":False})
+    qdb["quotes"].append({"quote":" ".join(args[1:]), "time":time.time(), "method":"IRC", "info":info, "deleted":False})
     qdb.sync()
-    connection.ircsend(info["channel"], "Quote %(quotenum)d added successfully." % dict(quotenum=len(qdb["quotes"])))
+    connection.ircsend(info["channel"], "Quote #%(quotenum)d added successfully." % dict(quotenum=len(qdb["quotes"])))
     qdb.close()
