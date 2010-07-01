@@ -1,5 +1,6 @@
 def startup(addPluginHook, addHook, world) :
     addPluginHook(world, "syntax", main, 1, ["self", "info", "args", "world"])
+    addPluginHook(world, "help", main, 1, ["self", "info", "args", "world"])
 def main(self, info, args, world) :
     """syntax <plugin>
 The syntax command shows the syntax for any command, including itself."""

@@ -4,6 +4,7 @@ helpstring = "youtube <entry> <url> Availible entries are: title, pubdate, desc,
 minlevel = 1
 
 def main(connection, info, args) :
+    """Gets information about video's from youtube"""
     vid = args[2].split("&", 1)[0].split("?v=", 1)[1]
     x = gdata.youtube.service.YouTubeService()
     y = x.GetYouTubeVideoEntry(video_id=vid)
