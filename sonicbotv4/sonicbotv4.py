@@ -218,7 +218,7 @@ class sonicbot() :
                     else : ipv6 = False
                     networkname = args[5].lower()
                     channels = args[7:]
-                    makeNewConnection(networkname, nick, self.ident, self.realname, host, port, channels, ssl, ipv6, self.password, self.trigger, self.owner, admin)
+                    makeNewConnection(networkname, self.nick, self.ident, self.realname, host, port, channels, ssl, ipv6, self.password, self.trigger, self.owner, admin)
                 except : traceback.print_exc()
     def allowed(self, info, minlevel) :
         """Authenticates users"""
