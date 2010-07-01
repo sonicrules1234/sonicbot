@@ -1,3 +1,4 @@
+import time
 conlist = []
 instances = {}
 connections = {}
@@ -6,3 +7,4 @@ hooks = {}
 first = False
 plugins = {}
 relay_channels = []
+uptime = int(time.time())
