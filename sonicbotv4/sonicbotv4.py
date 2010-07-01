@@ -204,6 +204,20 @@ class sonicbot() :
                 world.plugins = {}
                 hookstartup.main(self, world)
                 self.msg(info["channel"], "Plugins reloaded")
+            elif info["message"].split(" ")[0] == self.trigger + "connect" and self.allowed(info, 5) :
+                args = info["message"].split(" ")
+                admin = {self.owner:args[6]}
+                host = args[1]
+                port = args[2]
+                if args[3] == "1" :
+                    ssl = True
+                else : ssl = False
+                if args[4] == "1" :
+                    ipv6 = True
+                else : ipv6 = False
+                networkname = args[5].lower()
+                channels = args[7:]
+                makeNewConnection(networkname, nick, self.ident, self.realname, host, port, channels, ssl, ipv6, self.password, self.trigger, self.owner, admin)
     def allowed(self, info, minlevel) :
         """Authenticates users"""
         if info["sender"] not in self.users["users"].keys() :
@@ -225,6 +239,10 @@ class sonicbot() :
         else :
             self.ircsend(info["sender"], _("Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command."))
             return False
+
+def makeNewConnection(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin) :
+    v = sonicbot(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin)
+    v.connect()
 
 def floodControl() :
     while True :
