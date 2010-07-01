@@ -1,4 +1,4 @@
-import imp, glob, os
+import imp, glob, os, traceback
 
 def main(self, world) :
     world.loaded = True
@@ -30,11 +30,13 @@ def hookOldPlugins(self, world) :
         os.remove(filename)
     for xplugin in glob.glob("oldplugins/*.py") :
         if xplugin != "oldplugins/__init__.py" and xplugin != "oldplugins\\__init__.py" :
-            y = xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", "")
-            if y.startswith("on_") :
-                print "Loading old", y[3:]
-                self.addHook(y[3:], imp.load_source(xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", ""), xplugin), 1, ["self", "info"])
-            else : oldplugins[xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", "")] = imp.load_source(xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", ""), xplugin)
+            try :
+                y = xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", "")
+                if y.startswith("on_") :
+                    print "Loading old", y[3:]
+                    self.addHook(y[3:], imp.load_source(xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", ""), xplugin), 1, ["self", "info"])
+                else : oldplugins[xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", "")] = imp.load_source(xplugin.replace("oldplugins\\", "").replace("oldplugins/", "").replace(".py", ""), xplugin)
+            except : traceback.print_exc()
     for xplugin in oldplugins.keys() :
         x = oldplugins[xplugin]
         addHookOldPlugin(world, xplugin.lower(), x, x.minlevel, x.arguments, x.helpstring, x.main.__doc__)
