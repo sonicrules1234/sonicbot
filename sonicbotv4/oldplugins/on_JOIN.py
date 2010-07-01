@@ -4,7 +4,7 @@ def main(connection, info) :
     """Runs every time sonicbot sees somebody join a channel"""
     if info["sender"] in connection.admin.keys() :
 
-        if info["hostname"] in connect.admin[info["sender"]] :
+        if info["hostname"] in connection.admin[info["sender"]] :
 
             if connection.host in connection.modeonjoin.keys() :
                 for mode in connection.modeonjoin[connection.host] :
