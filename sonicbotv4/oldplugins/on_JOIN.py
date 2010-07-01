@@ -2,13 +2,13 @@
 import shelve
 def main(connection, info) :
     """Runs every time sonicbot sees somebody join a channel"""
-    if info["sender"] in connection.admin.keys() :
-
-        if info["hostname"] in connection.admin[info["sender"]] :
-
-            if connection.host in connection.modeonjoin.keys() :
-                for mode in connection.modeonjoin[connection.host] :
-                    connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
+#    if info["sender"] in connection.admin.keys() :
+#
+#        if info["hostname"] in connection.admin[info["sender"]] :
+#
+#            if connection.host in connection.modeonjoin.keys() :
+#                for mode in connection.modeonjoin[connection.host] :
+#                    connection.rawsend("MODE %s +%s %s\n" % (info["channel"], mode, info["sender"]))
 #    if info["sender"] != self.nick and info["channel"] in self.avchans : connection.rawsend("MODE %s +v %s\n" % (info["channel"], info["sender"]))
     mail = shelve.open("mail.db", writeback=True)
     if info["sender"].replace("[", "").replace("]", "") in mail.keys() :
