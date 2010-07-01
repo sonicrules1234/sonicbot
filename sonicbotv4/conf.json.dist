@@ -1,0 +1,22 @@
+[
+    {
+        "ident": "sonicbotv4", 
+        "realname": "sonicbotv4", 
+        "ssl": false, 
+        "admin": {
+            "<Your nick>": "<Your hostname>"
+        }, 
+        "channels": [ 
+            "#sonicbot"
+        ], 
+        "nick": "<bot's nick>", 
+        "host": "irc.sonicbot.org", 
+        "trigger": ">", 
+        "ipv6": false, 
+        "owner": "<Your nick>", 
+        "password": "", 
+        "networkname": "vbirc", 
+        "port": 6667
+    }
+]
+
