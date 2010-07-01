@@ -204,22 +204,6 @@ class sonicbot() :
                 world.plugins = {}
                 hookstartup.main(self, world)
                 self.msg(info["channel"], "Plugins reloaded")
-            elif info["message"].split(" ")[0] == self.trigger + "connect" and self.allowed(info, 5) :
-                try :
-                    args = info["message"].split(" ")
-                    admin = {self.owner:args[6]}
-                    host = args[1]
-                    port = int(args[2])
-                    if args[3] == "1" :
-                        ssl = True
-                    else : ssl = False
-                    if args[4] == "1" :
-                        ipv6 = True
-                    else : ipv6 = False
-                    networkname = args[5].lower()
-                    channels = args[7:]
-                    makeNewConnection(networkname, nick, self.ident, self.realname, host, port, channels, ssl, ipv6, self.password, self.trigger, self.owner, admin)
-                except : traceback.print_exc()
     def allowed(self, info, minlevel) :
         """Authenticates users"""
         if info["sender"] not in self.users["users"].keys() :
@@ -241,10 +225,6 @@ class sonicbot() :
         else :
             self.ircsend(info["sender"], _("Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command."))
             return False
-
-def makeNewConnection(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin) :
-    v = sonicbot(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin)
-    v.connect()
 
 def floodControl() :
     while True :
@@ -280,7 +260,8 @@ def waitfordata() :
                 try :
                     connections = select.select([network], [], [], 0)
                 except :
-                    world.instances[network].cleanup()
+                    del world.connections[world.instances[connection].networkname]
+                    del world.instances[network]
                     world.conlist.remove(network)
 
         if noerror :
@@ -293,7 +274,9 @@ def waitfordata() :
                     world.instances[connection].dataReceived(data)
                 else:
                     print "No data, closing the connection"
-                    world.instances[connection].cleanup()
+                    del world.connections[world.instances[connection].networkname]
+                    del world.instances[connection]
+                    world.conlist.remove(connection)
                     connection.close()
         del tempconlist
 conffile = open("conf.json", "r")
@@ -323,5 +306,10 @@ for network in jsonconf :
     a.connect()
 #a = sonicbot("vbirc", "sonicbot-dev", "sonicbot-dev", "Development version of sonicbotv4", "2a02:780:d002:5::17", 6697, ["#ninjas"], True, False, "")
 #a.connect()
-while True :
-    time.sleep(5)
+try :
+    while True :
+        time.sleep(5)
+except :
+    for network in world.instances.keys() :
+        world.instances[network].rawsend("QUIT :Hmm, somebody hit Ctrl-C, better /quit!\n")
+        world.instances[network].sock.close()
