@@ -133,6 +133,7 @@ class sonicbot() :
     def determineTiming(self, channel, line, msgtype) :
         if world.time >= self.timer :
             world.timer.append([world.time + 1, {"self":self, "type":msgtype, "arguments":(channel, line)}])
+            self.timer = world.time + 1
         if world.time < self.timer :
             world.timer.append([self.timer + 1, {"self":self, "type":msgtype, "arguments":(channel, line)}])
             self.timer += 1
