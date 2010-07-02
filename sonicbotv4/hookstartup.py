@@ -45,11 +45,13 @@ def addHookOldPlugin(world, keyword, function, minlevel, arguments, helpstring, 
         world.plugins[keyword] = []
     world.plugins[keyword].append({"minlevel":minlevel, "arguments":arguments, "function":function.main, "syntax":helpstring, "detailedhelp":detailedhelp})
 def addHookPlugin(world, keyword, function, minlevel, arguments) :
-    if not world.plugins.has_key(keyword) :
-        world.plugins[keyword.lower()] = []
-    docs = function.__doc__
-    docs = docs.replace("\r", "")
-    lines = docs.split("\n")
-    helpstring = lines[0]
-    detailedhelp = "\n".join(lines[1:])
-    world.plugins[keyword.lower()].append({"minlevel":minlevel, "arguments":arguments, "function":function, "syntax":helpstring, "detailedhelp":detailedhelp})
+    try :
+        if not world.plugins.has_key(keyword) :
+            world.plugins[keyword.lower()] = []
+        docs = function.__doc__
+        docs = docs.replace("\r", "")
+        lines = docs.split("\n")
+        helpstring = lines[0]
+        detailedhelp = "\n".join(lines[1:])
+        world.plugins[keyword.lower()].append({"minlevel":minlevel, "arguments":arguments, "function":function, "syntax":helpstring, "detailedhelp":detailedhelp})
+    except : traceback.print_exc()
