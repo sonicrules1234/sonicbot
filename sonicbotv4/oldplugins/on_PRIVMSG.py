@@ -1,4 +1,4 @@
-import shelve, time
+import shelve, time, random
 def main(connection, info) :
     """This is the old plugin"""
 #"""Run every time a message is seen"""
