@@ -108,10 +108,14 @@ class sonicbot() :
     def join(self, channel) :
         self.rawsend("JOIN %s\r\n" % (channel))
     def msg(self, channel, message) :
+        if channel.startswith("#") :
+            self.pm(channel, message)
+        else : self.notice(channel, message)
+    def pm(self, channel, message) :
         for line in message.replace("\r", "").split("\n") :
             lines2 = self.quantify("PRIVMSG", channel, line)
             for line2 in lines2 :
-                self.determineTiming(channel, line2, "PRIVMSG")
+                self.determineTiming(channel, line2, "PRIVMSG")        
 
     def msg2send(self, channel, message) :
         self.rawsend("PRIVMSG %s :%s\r\n" % (channel, message))
@@ -131,11 +135,15 @@ class sonicbot() :
             for line2 in lines2 :
                 self.determineTiming(channel, line2, "NOTICE")
     def determineTiming(self, channel, line, msgtype) :
+        if msgtype == "PRIVMSG" :
+            function = self.pm
+        else :
+            function = self.notice
         if world.time >= self.timer :
-            world.timer.append([world.time + 1, {"self":self, "type":msgtype, "arguments":(channel, line)}])
+            world.timer.append([world.time + 1, {"function":function, "arguments":(channel, line)}])
             self.timer = world.time + 1
         elif world.time < self.timer :
-            world.timer.append([self.timer + 1, {"self":self, "type":msgtype, "arguments":(channel, line)}])
+            world.timer.append([self.timer + 1, {"function":function, "arguments":(channel, line)}])
             self.timer += 1
     def part(self, channel, reason=None) :
         if reason == None :
@@ -163,7 +171,7 @@ class sonicbot() :
                     info["words"] = line[1:].split(" ")
                     if info["words"][1] == "001" :
                         self.rawsend("MODE %s +B\n" % (self.nick))
-                        self.msg("NickServ", "IDENTIFY %s" % (self.password))
+                        self.pm("NickServ", "IDENTIFY %s" % (self.password))
                         for i in self.channels :
                             self.rawsend("JOIN %s \n" % (i))
                         #if self.host in conf.connectcommands :
@@ -251,10 +259,7 @@ def floodControl() :
             if x[0] < currenttime :
                 world.timer.pop(0)
             elif x[0] == currenttime :
-                if x[1]["type"] == "NOTICE" :
-                    x[1]["self"].notice2send(*x[1]["arguments"])
-                elif x[1]["type"] == "PRIVMSG" :
-                    x[1]["self"].msg2send(*x[1]["arguments"])
+                x[1]["function"](*arguments)
             else :
                 break
         del worldtimer
