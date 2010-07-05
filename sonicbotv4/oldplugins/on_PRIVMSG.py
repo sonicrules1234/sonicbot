@@ -28,11 +28,11 @@ def main(connection, info) :
                     if info["sender"] not in badwords[connection.host][info["channel"]]["users"] :
                         badwords[connection.host][info["channel"]]["users"][info["sender"]] = 0
                         badwords.sync()
-                    if badwords[connection.host][info["channel"]]["users"][info["sender"]] > 0 :
-                        if info["sender"] in connection.hostnames.keys() :
-                            target = "*!*@%s" % (connection.hostnames[info["sender"]])
-                        else : target = "%s*!*@*" % (info["sender"])
-                        connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
+#                    if badwords[connection.host][info["channel"]]["users"][info["sender"]] > 0 :
+#                        if info["sender"] in connection.hostnames.keys() :
+#                            target = "*!*@%s" % (connection.hostnames[info["sender"]])
+#                        else : target = "%s*!*@*" % (info["sender"])
+#                        connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
                     connection.rawsend("KICK %s %s :%s\n" % (info["channel"], info["sender"], "Don't use that word!"))
                     badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
                     badwords.sync()
