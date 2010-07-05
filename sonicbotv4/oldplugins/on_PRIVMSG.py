@@ -24,7 +24,7 @@ def main(connection, info) :
         if badwords[connection.host].has_key(info["channel"]) :
             nosay = badwords[connection.host][info["channel"]]["badwords"]
             for word in nosay :
-                if word in info["message"].lower().replace(" ", "") :
+                if word in [message.replace(".", "").replace("!","").replace("?", "") for message in info["message"].lower().split(" ")] :
                     if info["sender"] not in badwords[connection.host][info["channel"]]["users"] :
                         badwords[connection.host][info["channel"]]["users"][info["sender"]] = 0
                         badwords.sync()
