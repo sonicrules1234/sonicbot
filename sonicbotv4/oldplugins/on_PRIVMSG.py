@@ -33,7 +33,7 @@ def main(connection, info) :
 #                            target = "*!*@%s" % (connection.hostnames[info["sender"]])
 #                        else : target = "%s*!*@*" % (info["sender"])
 #                        connection.rawsend("MODE %s +b %s\n" % (info["channel"], target))
-                    connection.rawsend("KICK %s %s :%s\n" % (info["channel"], info["sender"], "Don't use that word!"))
+                    connection.rawsend("KICK %s %s :%s (%s)\n" % (info["channel"], info["sender"], "Don't use that word!", word))
                     badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
                     badwords.sync()
     badwords.close()
