@@ -260,7 +260,6 @@ def floodControl() :
             if x[0] < currenttime :
                 world.timer.pop(0)
             elif x[0] == currenttime :
-                arguments
                 x[1]["function"](*x[1]["arguments"])
             else :
                 break
