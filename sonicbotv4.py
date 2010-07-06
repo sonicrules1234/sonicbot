@@ -136,9 +136,9 @@ class sonicbot() :
                 self.determineTiming(channel, line2, "NOTICE")
     def determineTiming(self, channel, line, msgtype) :
         if msgtype == "PRIVMSG" :
-            function = self.pm
+            function = self.msg2send
         else :
-            function = self.notice
+            function = self.notice2send
         if world.time >= self.timer :
             world.timer.append([world.time + 1, {"function":function, "arguments":(channel, line)}])
             self.timer = world.time + 1
@@ -253,12 +253,14 @@ class sonicbot() :
 
 def floodControl() :
     while True :
+        print "World timer going"
         currenttime = world.time
         worldtimer = world.timer[:]
         for x in worldtimer :
             if x[0] < currenttime :
                 world.timer.pop(0)
             elif x[0] == currenttime :
+                arguments
                 x[1]["function"](*x[1]["arguments"])
             else :
                 break
