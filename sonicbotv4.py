@@ -253,7 +253,6 @@ class sonicbot() :
 
 def floodControl() :
     while True :
-        print "World timer going"
         currenttime = world.time
         worldtimer = world.timer[:]
         for x in worldtimer :
