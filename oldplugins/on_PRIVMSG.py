@@ -52,6 +52,13 @@ def main(connection, info) :
             contextdb[info["channel"]].pop(0)
             contextdb.sync()
     contextdb.close()
+    memos = shelve.open("memos.db", writeback=True)
+    if memos.has_key(info["sender"].lower()) :
+        for memo in memos[info["sender"].lower()] :
+            connection.ircsend(info["channel"], "%(sender)s: %(memoer)s sent you a memo! '%(memo)s'" % {"sender":info["sender"], "memoer":memo["sender"], "memo":memo["message"]})
+        memos[info["sender"].lower()] = []
+        memos.sync()
+    memos.close()
     
 
 
@@ -143,6 +150,14 @@ def on_ACTION(connection, info) :
                     badwords[connection.host][info["channel"]]["users"][info["sender"]] += 1
                     badwords.sync()
     badwords.close()
+    memos = shelve.open("memos.db", writeback=True)
+    if memos.has_key(info["sender"].lower()) :
+        for memo in memos[info["sender"].lower()] :
+            connection.ircsend(info["channel"], "%(sender)s: %(memoer)s sent you a memo! '%(memo)s'" % {"sender":info["sender"], "memoer":memo["sender"], "memo":memo["message"]})
+        memos[info["sender"].lower()] = []
+        memos.sync()
+    memos.close()
+
     args = info["message"].replace("\x01", "").split(" ")[1:]
     contextdb = shelve.open("context.db", writeback=True)
     if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
