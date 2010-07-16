@@ -3,4 +3,6 @@ def startup(addPluginHook, addHook, world) :
 def main(self, info, args, world) :
     """list
 The list command lists all plugins"""
-    self.msg(info["channel"], " ".join(world.plugins.keys()))
+    pluginlist = world.plugins.keys()
+    pluginlist.sort()
+    self.msg(info["channel"], " ".join(pluginlist))
