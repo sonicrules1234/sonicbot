@@ -4,6 +4,7 @@ def main(connection, info) :
 #"""Run every time a message is seen"""
     if info["message"].startswith("\x01ACTION") and info["message"].endswith("\x01") :
         on_ACTION(connection, info)
+        return None
 #    if info["sender"] == "OperServ" :
 #        words = info["message"].split(" ")
 #        if words[0] == "REGISTER:" :
