@@ -32,7 +32,7 @@ class sonicbot() :
         self.debug = False
     def logwrite(self, channel, log) :
         """Logs things to file, also is used when relaying"""
-        if channel in self.channels :
+        if channel in self.channellist :
             self.logs[channel].write(log)
             print log
             if channel != self.nick :
