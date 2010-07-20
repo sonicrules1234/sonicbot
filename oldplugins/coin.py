@@ -1,3 +1,4 @@
+import shelve
 arguments = ["self", "info", "args", "world"]
 minlevel = 2
 helpstring = "coin <bet>"
