@@ -112,7 +112,7 @@ class sonicbot() :
         if channel.startswith("#") :
             self.pm(channel, message)
         else : self.notice(channel, message)
-    def pm(self, channel, message reply=False) :
+    def pm(self, channel, message, reply=False) :
         if reply : message = self.info["sender"] + ": "
         for line in message.replace("\r", "").split("\n") :
             lines2 = self.quantify("PRIVMSG", channel, line)
