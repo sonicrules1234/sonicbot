@@ -5,4 +5,4 @@ def main(self, info, args, world) :
 The list command lists all plugins"""
     pluginlist = world.plugins.keys()
     pluginlist.sort()
-    self.msg(info["channel"], " ".join(pluginlist))
+    self.msg(info["sender"], " ".join(pluginlist))
