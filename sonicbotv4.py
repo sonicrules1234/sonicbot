@@ -108,12 +108,12 @@ class sonicbot() :
     def join(self, channel) :
         self.rawsend("JOIN %s\r\n" % (channel))
     def msg(self, channel, message, reply=False) :
-        if reply : message = self.info["sender"] + ": "
+        if reply : message = self.info["sender"] + ": " + message
         if channel.startswith("#") :
             self.pm(channel, message)
         else : self.notice(channel, message)
     def pm(self, channel, message, reply=False) :
-        if reply : message = self.info["sender"] + ": "
+        if reply : message = self.info["sender"] + ": " + message
         for line in message.replace("\r", "").split("\n") :
             lines2 = self.quantify("PRIVMSG", channel, line)
             for line2 in lines2 :
@@ -132,7 +132,7 @@ class sonicbot() :
             message = message[newmaxout:]
         return lines
     def notice(self, channel, message, reply=False) :
-        if reply : message = self.info["sender"] + ": "
+        if reply : message = self.info["sender"] + ": " + message
         for line in message.replace("\r", "").split("\n") :
             lines2 = self.quantify("NOTICE", channel, line)
             for line2 in lines2 :

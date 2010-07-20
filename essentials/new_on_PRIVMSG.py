@@ -31,5 +31,6 @@ def main(self, info, world) :
                     try :
                         plugin["function"](*arguments)
                     except :
-                        traceback.print_exc()
+                        self.error = traceback.format_exc()
                         self.msg(info["channel"], "Error")
+                        print self.error
