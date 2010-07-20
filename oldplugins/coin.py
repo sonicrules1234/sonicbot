@@ -5,7 +5,7 @@ helpstring = "coin <bet>"
 
 def main(connection, info, args, world) :
     """Decides heads or tails based on the coinchance variable.   Adds or removes appropriate amount of money"""
-    money = shelve.open("money-%s.db" % (world.networkname), writeback=True)
+    money = shelve.open("money-%s.db" % (connection.networkname), writeback=True)
     if money.has_key(info["sender"]) :
         bet = int(args[1])
         if bet <= money[info["sender"]]["money"] and bet >= 1 :
