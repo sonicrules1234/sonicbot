@@ -27,7 +27,7 @@ def main(self, info, world) :
         if world.plugins.has_key(args[0].lower()) :
             for plugin in world.plugins[args[0].lower()] :
                 arguments = eval(", ".join(plugin["arguments"]))
-                if self.allowed(info, plugin["minlevel"]) :
+                if self.allowed(info, plugin["minlevel"]) and args[0].lower() in self.users["channels"][info["channel"]]["enabled"] :
                     try :
                         plugin["function"](*arguments)
                     except :
