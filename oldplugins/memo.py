@@ -5,7 +5,7 @@ minlevel = 1
 
 def main(connection, info, args) :
     db = shelve.open("memos.db", writeback=True)
-    if not db.has_key(args[0].lower()) :
+    if not db.has_key(args[1].lower()) :
         db[args[1].lower()] = []
         db.sync()
     db[args[1].lower()].append({"sender":info["sender"], "message":" ".join(args[2:]), "time":time.time()})
