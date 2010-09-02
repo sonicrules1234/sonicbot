@@ -40,7 +40,7 @@ def main(connection, info) :
     badwords.close()
     if info["sender"] not in connection.ignorelist :
         if info["message"].lower().startswith("hi") or info["message"].lower().startswith("hello") or info["message"].lower().startswith("hey") :
-            if connection.nick in info["message"].lower() :
+            if connection.nick.lower() in info["message"].lower() :
                 connection.msg(info["channel"], _("Hello %(sender)s!") % dict(sender=info["sender"]))
     contextdb = shelve.open("context.db", writeback=True)
     if not contextdb.has_key(info["channel"]) and info["channel"].startswith("#") :
