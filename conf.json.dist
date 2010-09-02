@@ -15,7 +15,7 @@
         "ipv6": false, 
         "owner": "<Your nick>", 
         "password": "", 
-        "networkname": "vbirc", 
+        "networkname": "FreeNode", 
         "port": 6667
     }
 ]
