@@ -10,7 +10,7 @@
             "#sonicbot"
         ], 
         "nick": "<bot's nick>", 
-        "host": "irc.sonicbot.org", 
+        "host": "irc.freenode.net", 
         "trigger": ">", 
         "ipv6": false, 
         "owner": "<Your nick>", 
