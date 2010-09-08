@@ -8,6 +8,7 @@ def main(connection, info, args) :
     connection.ircsend(info["channel"], lookup(args[1]))
 
 def lookup(data, v=4) :
+    """This code is not by me.  It was written by nathan from ClueNet"""
     (ov,v)=(v,{4:2,6:10}[v])
     import socket
     data=[data]
