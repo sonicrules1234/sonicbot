@@ -8,7 +8,9 @@ def main(connection, info, args) :
     if not db.has_key(args[1].lower()) :
         db[args[1].lower()] = []
         db.sync()
-    db[args[1].lower()].append({"sender":info["sender"], "message":" ".join(args[2:]), "time":time.time()})
-    db.sync()
-    db.close()
-    connection.ircsend(info["channel"], "%(sender)s: Message sent." % dict(sender=info["sender"]))
+    if len(db[args[1].lower()]) < 3 :
+        db[args[1].lower()].append({"sender":info["sender"], "message":" ".join(args[2:]), "time":time.time()})
+        db.sync()
+        db.close()
+        connection.ircsend(info["channel"], "%(sender)s: Message sent." % dict(sender=info["sender"]))
+    else : connection.ircsend(info["channel"], "Sorry, but that person already has 3 memos.")
