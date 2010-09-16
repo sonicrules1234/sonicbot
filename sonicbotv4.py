@@ -45,6 +45,7 @@ class sonicbot() :
         else : self.logs[self.nick].write(log)
 #        self.addHook("PRIVMSG", imp.load_source("essentials/on_PRIVMSG.py", "on_PRIVMSG").main, 1, ["self", "info", "world"])
     def onConnect(self) :
+        self.passsend(self.password)
         self.nicksend(self.nick)
         self.usersend(self.ident, self.realname)
         world.instances[self.sock] = self
@@ -73,7 +74,11 @@ class sonicbot() :
         self.timer = 0
         if not world.waitingfordata :
             world.waitingfordata = True
-            thread.start_new_thread(waitfordata, ())
+            thread.start_new_thread(waitfordata, ())http://pastebin.com/aSgKHyT2
+
+    def passsend(self, password) :
+        self.rawsend("PASS " + password)
+
     def enable_all_plugins(self, info) :
         """Enables all plugins for the current channel"""
         self.users["channels"][info["channel"]]["enabled"] = []
