@@ -74,7 +74,7 @@ class sonicbot() :
         self.timer = 0
         if not world.waitingfordata :
             world.waitingfordata = True
-            thread.start_new_thread(waitfordata, ())http://pastebin.com/aSgKHyT2
+            thread.start_new_thread(waitfordata, ())
 
     def passsend(self, password) :
         self.rawsend("PASS " + password)
