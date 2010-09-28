@@ -77,7 +77,7 @@ class sonicbot() :
             thread.start_new_thread(waitfordata, ())
 
     def passsend(self, password) :
-        self.rawsend("PASS " + password)
+        self.rawsend("PASS " + password + "\r\n")
 
     def enable_all_plugins(self, info) :
         """Enables all plugins for the current channel"""
