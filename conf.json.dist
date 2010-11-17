@@ -1,15 +1,20 @@
 [
     {
+        "global settings": {
+            "IPInfoDB-apikey": "<Your ipinfodb.com API key>"
+        }
+    }, 
+    {
         "ident": "sonicbotv4", 
         "realname": "sonicbotv4", 
-        "ssl": false, 
+        "nick": "<bot's nick>", 
         "admin": {
             "<Your nick>": "<Your hostname>"
         }, 
-        "channels": [ 
+        "channels": [
             "#sonicbot"
         ], 
-        "nick": "<bot's nick>", 
+        "ssl": false, 
         "host": "irc.freenode.net", 
         "trigger": ">", 
         "ipv6": false, 

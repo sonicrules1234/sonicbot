@@ -317,8 +317,8 @@ conffile = open("conf.json", "r")
 conf = conffile.read()
 conffile.close()
 jsonconf = json.loads(conf)
-
-for network in jsonconf :
+world.globalsettings = jsonconf[0]
+for network in jsonconf[1:] :
     newconf = {}
     newconf["nick"] = network[u"nick"].encode("utf8")
     newconf["ident"] = network[u"ident"].encode("utf8")
