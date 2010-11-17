@@ -105,8 +105,10 @@ class sonicbot() :
         self.sock = socket.socket(self.socktype, socket.SOCK_STREAM)
         if self.ssl :
             self.sock = ssl.wrap_socket(self.sock)
-        self.sock.connect((self.host, self.port))
-        self.onConnect()
+        try :
+            self.sock.connect((self.host, self.port))
+            self.onConnect()
+        except : print "Could not connect to %(host)s" % dict(host=self.host)
     def rawsend(self, data) :
         self.sock.send(data)
         print "[OUT %s] %s" % (self.host, data)
