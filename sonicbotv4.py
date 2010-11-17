@@ -319,7 +319,7 @@ conffile = open("conf.json", "r")
 conf = conffile.read()
 conffile.close()
 jsonconf = json.loads(conf)
-world.globalsettings = jsonconf[0]
+world.globalsettings = jsonconf[0][u"global settings"]
 for network in jsonconf[1:] :
     newconf = {}
     newconf["nick"] = network[u"nick"].encode("utf8")
