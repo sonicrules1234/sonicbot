@@ -12,7 +12,7 @@ def main(connection, info, args) :
     html2 = html.read()
     html.close()
     html = html2
-    x = re.findall('<hr class="top" /><h2>(.*)</h2>.*<div class="output".*alt="(.*)" title=".*"\s*/>', html)
+    x = re.findall('<hr class="top" /><h2>(.*)</h2>.*<div class="output pnt".*alt="(.*)" title=".*"\s*/>', html)
     send = []
     for y in x :
         if ">" in y[0] or ">" in y[0] or ">" in y[1] or "<" in y[1] or "\\n" in y[0] or "\\n" in y[1] :
