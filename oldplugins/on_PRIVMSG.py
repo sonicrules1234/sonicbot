@@ -181,3 +181,7 @@ def on_ACTION(connection, info) :
         if args[0] in ["slaps", "punches", "stomps", "hurts", "rapes", "hits", "fucks", "smacks", "crunches", "kicks", "barfs", "forces", "force", "squishes", "bodyslams", "shoots", "compresses", "tackles"] :
             if args[1] == connection.nick or args[-1] == connection.nick :
                 connection.msg(info["channel"], random.choice(["Oww!", "Ouch, that hurt!", "\x01ACTION curls up in fetal position\x01", "\x01ACTION slaps %s\x01" % (info["sender"]), "\x01ACTION smacks %s\x01" % (info["sender"]), "\x01ACTION kicks %s\x01" % (info["sender"]), "\x01ACTION explodes\x01"]))
+    if len(args) > 1 :
+        if args[0].lower() == "hugs" and args[1] == connection.nick :
+            connection.msg(info["channel"], "\x01ACTION hugs %(sender)s\x01" % dict(sender=info["sender"]))
+
