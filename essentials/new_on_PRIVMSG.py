@@ -27,10 +27,19 @@ def main(self, info, world) :
         if world.plugins.has_key(args[0].lower()) :
             for plugin in world.plugins[args[0].lower()] :
                 arguments = eval(", ".join(plugin["arguments"]))
-                if self.allowed(info, plugin["minlevel"]) and args[0].lower() in self.users["channels"][info["channel"]]["enabled"] :
-                    try :
-                        plugin["function"](*arguments)
-                    except :
-                        self.error = traceback.format_exc()
-                        self.msg(info["channel"], "Error")
-                        print self.error
+                if info["channel"] != info["sender"] :
+                    if self.allowed(info, plugin["minlevel"]) and args[0].lower() in self.users["channels"][info["channel"]]["enabled"] :
+                        try :
+                            plugin["function"](*arguments)
+                        except :
+                            self.error = traceback.format_exc()
+                            self.msg(info["channel"], "Error")
+                            print self.error
+                elif info["channel"] == info["sender"] :
+                    if self.allowed(info, plugin["minlevel"]) :
+                        try :
+                            plugin["function"](*arguments)
+                        except :
+                            self.error = traceback.format_exc()
+                            self.msg(info["channel"], "Error")
+                            print self.error
