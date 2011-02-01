@@ -10,4 +10,4 @@ def main(self, info) :
         del self.channellist[info["channel"]]
         del self.chanmodes[info["channel"]]
     else :
-        if info["sender"] in info["channel"] : self.channellist[info["channel"]].remove(info["sender"])
+        if info["sender"] in self.channellist[info["channel"]] : self.channellist[info["channel"]].remove(info["sender"])
