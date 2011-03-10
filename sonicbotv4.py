@@ -1,6 +1,6 @@
 
 import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve, string
-import gettext, hookstartup, traceback, os
+import gettext, hookstartup, traceback, os, random
 lang = gettext.translation("english", "./locale", languages=["en"])
 lang.install()
 world.loaded = False
@@ -65,8 +65,8 @@ class sonicbot() :
         self.hostnames = {}
         self.users = shelve.open("users-%s.db" % (self.networkname), writeback=True)
         if not self.users.has_key("users") :
-            self.users["salt"] = self.gensalt()
-            self.users.sync()
+            #self.users["salt"] = self.gensalt()
+            #self.users.sync()
             self.users["users"] = {}
             self.users.sync()
             for admin in self.admin.keys() :
