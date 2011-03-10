@@ -1,5 +1,5 @@
 
-import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve
+import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve, string
 import gettext, hookstartup, traceback, os
 lang = gettext.translation("english", "./locale", languages=["en"])
 lang.install()
@@ -44,6 +44,13 @@ class sonicbot() :
                 self.logs[channel] = open("%s/%s.txt" % (self.networkname, channel), "a")
         else : self.logs[self.nick].write(log)
 #        self.addHook("PRIVMSG", imp.load_source("essentials/on_PRIVMSG.py", "on_PRIVMSG").main, 1, ["self", "info", "world"])
+    def gensalt(self) :
+        possibles = possibles = string.ascii_uppercase + string.ascii_lowercase + string.digits + string.punctuation
+        salt = ""
+        for x in xrange(20) :
+            salt += random.choice(possibles)
+        return salt
+
     def onConnect(self) :
         self.passsend(self.password)
         self.nicksend(self.nick)
@@ -58,6 +65,8 @@ class sonicbot() :
         self.hostnames = {}
         self.users = shelve.open("users-%s.db" % (self.networkname), writeback=True)
         if not self.users.has_key("users") :
+            self.users["salt"] = self.gensalt()
+            self.users.sync()
             self.users["users"] = {}
             self.users.sync()
             for admin in self.admin.keys() :
@@ -108,7 +117,9 @@ class sonicbot() :
         try :
             self.sock.connect((self.host, self.port))
             self.onConnect()
-        except : print "Could not connect to %(host)s" % dict(host=self.host)
+        except :
+            print "Could not connect to %(host)s" % dict(host=self.host)
+            traceback.print_exc()
     def rawsend(self, data) :
         self.sock.send(data)
         print "[OUT %s] %s" % (self.host, data)
