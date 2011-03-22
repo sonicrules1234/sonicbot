@@ -1,4 +1,4 @@
-import glob, imp, os, traceback, time
+import glob, imp, os, traceback, time, shelve
 minlevel = 1
 arguments = ["self", "info", "world"]
 keyword = "PRIVMSG"
@@ -14,7 +14,7 @@ def main(self, info, world) :
 
     if args == [] :
         args.append("")
-    if info["message"][0] == self.trigger :
+    if info["message"][:len(self.trigger)] == self.trigger :
         args[0] = args[0][1:]
         triggered = True
     elif args[0] == self.nick + ":" or args[0] == self.nick + "," :
@@ -35,6 +35,11 @@ def main(self, info, world) :
                             self.error = traceback.format_exc()
                             self.msg(info["channel"], "Error")
                             print self.error
+                    elif args[0].lower() not in self.users["channels"][info["channel"]]["enabled"] :
+                        try :
+                            if isfactoid(info["message"][len(self.trigger):]) :
+                                self.msg(info["channel"], getfactoid(info["message"][len(self.trigger):], info))
+                        except: traceback.print_exc()
                 elif info["channel"] == info["sender"] :
                     if self.allowed(info, plugin["minlevel"]) :
                         try :
@@ -43,3 +48,21 @@ def main(self, info, world) :
                             self.error = traceback.format_exc()
                             self.msg(info["channel"], "Error")
                             print self.error
+def isfactoid(fact) :
+    factoids = shelve.open("factoids.db")
+    args = fact.split(" ")
+    x = fact.split(" | ")
+    if factoids.has_key(args[0].lower()) :
+        return True
+    else : return False
+def getfactoid(fact, info) :
+    factoids = shelve.open("factoids.db")
+    args = fact.split(" ")
+    x = fact.split(" | ", 1)
+    if factoids[args[0].lower()].has_key(info["channel"]) :
+        message = ""
+        if len(x) == 2 :
+            message = x[1] + ": "
+        message += factoids[args[0].lower()][info["channel"]]["definition"]
+        return message
+    else : return "No such command or factoid."
