@@ -18,4 +18,4 @@ Removes a factoid"""
     factoids[factoid][info["channel"]] = {"definition":definition, "deletiontime":deletion, "deleter":deleter, "deleternick":deleternick, "deleterident":deleterident, "deleterhost":deleterhost}
     factoids.sync()
     factoids.close()
-    self.msg("Factoid removed.")
+    self.msg(info["channel"], "Factoid removed.", True)

@@ -18,4 +18,4 @@ Adds a factoid"""
     factoids[factoid][info["channel"]] = {"definition":definition, "creationtime":creation, "creator":creator, "creatornick":creatornick, "creatorident":creatorident, "creatorhost":creatorhost}
     factoids.sync()
     factoids.close()
-    self.msg("Factoid added.")
+    self.msg(info["channel"], "Factoid added.", True)
