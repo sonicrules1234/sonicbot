@@ -11,7 +11,7 @@ Adds a factoid"""
     creator = info["whois"]
     creatornick = info["sender"]
     creatorident = info["whois"].split("!", 1)[1].split("@")[0]
-    createrhost = info["hostname"]
+    creatorhost = info["hostname"]
     if not factoids.has_key(factoid) :
         factoids[factoid] = {}
         factoids.sync()
