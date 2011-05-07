@@ -1,15 +1,15 @@
 import feedparser, shelve, time
-arguments = ["self", "info", "args", "world", "thread"]
+arguments = ["self", "info", "args", "world"]
 helpstring = "feednotifier <title> <feed url> <on/off>"
 minlevel = 3
 
-def main(connection, info, args, world, thread) :
+def main(connection, info, args, world) :
     """Starts the loop for checking feeds"""
     feedurl = args[-2]
     onoff = args[-1]
     title = " ".join(args[1:-2])
     if onoff == "on" :
-        feeds = shelve.open("feeds-%s.db" % (world.networkname[connection.host]), writeback=True)
+        feeds = shelve.open("feeds-%s.db" % (connection.networkname), writeback=True)
         feeds[feedurl] = {}
         feeds.sync()
         feeds[feedurl]["updated"] = 0
@@ -28,7 +28,7 @@ def main(connection, info, args, world, thread) :
         elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
+            get_feed(connection, info, args, feedurl, world, indexnum, title)
         else : connection.msg(info["channel"], _("That feed is already being tracked."))
     elif onoff == "off" :
         if feedurl in world.feeds[connection.host][info["channel"]].keys() :
@@ -38,7 +38,7 @@ def main(connection, info, args, world, thread) :
 
 def get_feed(connection, info, args, feedurl, world, indexnum, title) :
     """Checks the feed"""
-    while world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
+    if world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
         feed = feedparser.parse(feedurl)
         feeds = shelve.open("feeds-%s.db" % (world.networkname[connection.host]), writeback=True)
 
@@ -53,4 +53,7 @@ def get_feed(connection, info, args, feedurl, world, indexnum, title) :
             feeds.sync()
             connection.msg(info["channel"], _("Started tracking feed with title '%(title)s'.") % dict(title=feed["items"][0]["title"].encode("utf-8")))
         feeds.close()
-        time.sleep(120)
+        determineTiming(connection, info, args, feedurl, world, indexnum, title, get_feed)
+def determineTiming(self, info, args, feedurl, world, indexnum, title, function) :
+    arguments = (self, info, args, feedurl, world, indexnum, title)
+    world.timer.append([world.time + 60, {"function":function, "arguments":arguments}])

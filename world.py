@@ -8,3 +8,4 @@ first = False
 plugins = {}
 relay_channels = []
 uptime = int(time.time())
+feeds = {}
