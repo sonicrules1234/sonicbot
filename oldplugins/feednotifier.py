@@ -24,7 +24,7 @@ def main(connection, info, args, world) :
         if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
-            thread.start_new_thread(get_feed, (connection, info, args, feedurl, world, indexnum, title))
+            get_feed(connection, info, args, feedurl, world, indexnum, title)
         elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
             world.feeds[connection.host][info["channel"]][feedurl].append(True)
             indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
