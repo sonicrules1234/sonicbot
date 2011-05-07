@@ -40,7 +40,7 @@ def get_feed(connection, info, args, feedurl, world, indexnum, title) :
     """Checks the feed"""
     if world.feeds[connection.networkname][info["channel"]][feedurl][indexnum] :
         feed = feedparser.parse(feedurl)
-        feeds = shelve.open("feeds-%s.db" % (world.networkname[connection.networkname]), writeback=True)
+        feeds = shelve.open("feeds-%s.db" % (connection.networkname), writeback=True)
 
         print "Checking feed"
         print "Recorded = %s ; Feed = %s" % (feeds[feedurl]["updated"], feed["items"][0]["date"])
