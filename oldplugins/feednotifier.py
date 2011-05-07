@@ -15,32 +15,32 @@ def main(connection, info, args, world) :
         feeds[feedurl]["updated"] = 0
         feeds.sync()
         feeds.close()
-        if not world.feeds.has_key(connection.host) :
-            world.feeds[connection.host] = {}
-        if not world.feeds[connection.host].has_key(info["channel"]) :
-            world.feeds[connection.host][info["channel"]] = {}
-        if not world.feeds[connection.host][info["channel"]].has_key(feedurl) :
-            world.feeds[connection.host][info["channel"]][feedurl] = []
-        if len(world.feeds[connection.host][info["channel"]][feedurl]) == 0 :
-            world.feeds[connection.host][info["channel"]][feedurl].append(True)
-            indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
+        if not world.feeds.has_key(connection.networkname) :
+            world.feeds[connection.networkname] = {}
+        if not world.feeds[connection.networkname].has_key(info["channel"]) :
+            world.feeds[connection.networkname][info["channel"]] = {}
+        if not world.feeds[connection.networkname][info["channel"]].has_key(feedurl) :
+            world.feeds[connection.networkname][info["channel"]][feedurl] = []
+        if len(world.feeds[connection.networkname][info["channel"]][feedurl]) == 0 :
+            world.feeds[connection.networkname][info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[connection.networkname][info["channel"]][feedurl]) - 1
             get_feed(connection, info, args, feedurl, world, indexnum, title)
-        elif not world.feeds[connection.host][info["channel"]][feedurl][-1] :
-            world.feeds[connection.host][info["channel"]][feedurl].append(True)
-            indexnum = len(world.feeds[connection.host][info["channel"]][feedurl]) - 1
+        elif not world.feeds[connection.networkname][info["channel"]][feedurl][-1] :
+            world.feeds[connection.networkname][info["channel"]][feedurl].append(True)
+            indexnum = len(world.feeds[connection.networkname][info["channel"]][feedurl]) - 1
             get_feed(connection, info, args, feedurl, world, indexnum, title)
         else : connection.msg(info["channel"], _("That feed is already being tracked."))
     elif onoff == "off" :
-        if feedurl in world.feeds[connection.host][info["channel"]].keys() :
-                world.feeds[connection.host][info["channel"]][feedurl][-1] = False
+        if feedurl in world.feeds[connection.networkname][info["channel"]].keys() :
+                world.feeds[connection.networkname][info["channel"]][feedurl][-1] = False
                 connection.msg(info["channel"], _("Stopped tracking feed at %(urlfeed)s") % dict(urlfeed=feedurl))
         else : connection.msg(info["channel"], _("No such feed being tracked."))
 
 def get_feed(connection, info, args, feedurl, world, indexnum, title) :
     """Checks the feed"""
-    if world.feeds[connection.host][info["channel"]][feedurl][indexnum] :
+    if world.feeds[connection.networkname][info["channel"]][feedurl][indexnum] :
         feed = feedparser.parse(feedurl)
-        feeds = shelve.open("feeds-%s.db" % (world.networkname[connection.host]), writeback=True)
+        feeds = shelve.open("feeds-%s.db" % (world.networkname[connection.networkname]), writeback=True)
 
         print "Checking feed"
         print "Recorded = %s ; Feed = %s" % (feeds[feedurl]["updated"], feed["items"][0]["date"])
