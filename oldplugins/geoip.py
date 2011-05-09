@@ -9,7 +9,7 @@ def main(connection, info, args, world) :
     IPInfo = IPInfo.GetCity([cur[4][0] for cur in socket.getaddrinfo(args[1],None) if cur[0]==2][0])
     message = ""
     for x in IPInfo.keys() :
-        if IPInfo[x] != u"" :
+        if IPInfo[x] != u"" and x != u"Status" :
             message += x + u": " + IPInfo[x] + " - " 
-    if args[1] != "" : connection.msg(info["channel"], "%s: %s" % (info["sender"], message))
+    if args[1] != "" : connection.msg(info["channel"], u"%s: %s" % (info["sender"], message[:-3]))
     else : connection.msg(info["channel"], "You need to specify a host.")
