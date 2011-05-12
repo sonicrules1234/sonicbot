@@ -5,7 +5,7 @@ minlevel = 2
 
 def main(connection, info, args) :
     """Changes the sender's password"""
-    salt = self.gensalt()
+    salt = connection.gensalt()
     connection.users["users"][info["sender"]]["password"] = hashlib.sha512(args[1]+salt).hexdigest()
     connection.users.sync()
     connection.users["users"][info["sender"]]["salt"] = salt
