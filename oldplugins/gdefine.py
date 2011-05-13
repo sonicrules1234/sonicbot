@@ -18,5 +18,5 @@ def gdefine(word):
 def partfilter(inputtext) :
     for entity in htmlentitydefs.entitydefs.keys() :
         inputtext = inputtext.replace("&%s;" % (entity), htmlentitydefs.entitydefs[entity])
+    inputtext = inputtext.replace("<b>", "\x02").replace("</b>", "\x02")
     return inputtext
-
