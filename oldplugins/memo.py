@@ -4,6 +4,7 @@ helpstring = "memo <nick> <message>"
 minlevel = 1
 
 def main(connection, info, args) :
+    """Has the bot tell the specified nick the message when they are seen"""
     db = shelve.open("memos.db", writeback=True)
     if not db.has_key(args[1].lower()) :
         db[args[1].lower()] = []
