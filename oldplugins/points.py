@@ -118,6 +118,6 @@ def compare(points, user1, user2) :
         return "it is a tie"
     elif points["users"][user1]["points"] > points["users"][user2]["points"] :
         return _("%(nick1)s has %(numberofpoints)s more point(s) over %(nick2)s") % dict(nick1=user1, numberofpoints=str(points["users"][user1]["points"] - points["users"][user2]["points"]), nick2=user2)
-    elif points["users"][user1]["points"] > points["users"][user2]["points"] :
+    elif points["users"][user1]["points"] < points["users"][user2]["points"] :
         return _("%(nick1)s has %(numberofpoints)s more point(s) over %(nick2)s") % dict(nick1=user2, numberofpoints=str(points["users"][user2]["points"] - points["users"][user1]["points"]), nick2=user1)
     
