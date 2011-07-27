@@ -11,7 +11,7 @@ def main(connection, info, args) :
         f = urllib2.urlopen(request)
         source = f.read()
         resultlist = re.findall(r'<h3 class="r"><a href="(http://.+?)"', source)
-        resultlist2 = re.findall(r'<div class="s">(.+?)<br>', source)
+        resultlist2 = re.findall(r'<span class=st>(.+?)<br>', source)
         connection.ircsend(info["channel"], "%s - %s" % (resultlist[0], partfilter(resultlist2[0].replace("<em>", "\x02").replace("</em>", "\x02").replace("<b>", "\x02").replace("</b>", "\x02"))))
 def partfilter(inputtext) :
     for entity in htmlentitydefs.entitydefs.keys() :
