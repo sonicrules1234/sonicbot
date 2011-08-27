@@ -6,6 +6,7 @@ def main(connection, info, args) :
     """Registers a nick to sonicmail"""
     mail = shelve.open("mail.db")
     timet = str(int(time.time()))
+    connection.mailurl = "https://sonicrules.org/sonicmail"
     temp = {}
     password = ""
     for letter in range(6) :
