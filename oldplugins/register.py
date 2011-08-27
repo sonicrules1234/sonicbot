@@ -2,7 +2,7 @@ import shelve, time, hashlib, random, string
 arguments = ["self", "info", "args"]
 minlevel = 4
 helpstring = "register <nick>"
-def main(connection, info, argsf) :
+def main(connection, info, args) :
     """Registers a nick to sonicmail"""
     mail = shelve.open("mail.db")
     timet = str(int(time.time()))
