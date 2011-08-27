@@ -10,7 +10,7 @@ def main(connection, info, args) :
     password = ""
     for letter in range(6) :
         password += random.choice(string.letters)
-    temp["hostname"] = [connection.msg[args[1]]]
+    temp["hostname"] = [args[2]]
     temp["password"] = hashlib.sha512(password).hexdigest()
     temp["messages"] = {}
     temp["userorder"] = ["SonicMail"]
@@ -22,4 +22,4 @@ def main(connection, info, args) :
     mail.sync()
     mail.close()
     connection.msg(info["channel"], _("%(nick)s is now registered.") % dict(nick=args[1]))
-    connection.notice(args[1], _("You can now login to your mail at %(url)s Your username is '%(username)s' and your password is '%(password1)s'.  You may change your password once you have logged in.") % dict(url=self.mail_url, username=args[1].replace("[", "").replace("]", ""), password1=password))
+    connection.notice(args[1], _("You can now login to your mail at %(url)s Your username is '%(username)s' and your password is '%(password1)s'.  You may change your password once you have logged in.") % dict(url=connection.mail_url, username=args[1].replace("[", "").replace("]", ""), password1=password))
