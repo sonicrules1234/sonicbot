@@ -14,7 +14,9 @@ def gdefine(word):
     #return re.sub('&([^;]+);',lambda found: {'quot':'"',"amp":'&'}[found.groups()[0]],re.findall('<li>([^<]+)',urllib2.build_opener().open(req).read())[0])
     regex1 = re.findall("""<div class=s><div><span class=f>.*</span>(.*)\&nbsp\;\&nbsp\;<a class=fl href="/search\?""", urllib2.build_opener().open(req).read())
     #return re.findall("""
-    return re.sub("^\d+\. ", "", regex1[0].split("</div><div>")[0])
+    #return re.sub("^\d+\. ", "", regex1[0].split("</div><div>")[0])
+    regex1 = re.findall('style="padding\-bottom\:5px\;padding-top\:5px\;color\:\#666">(.+?)\:</td><td valign="top" style="padding\-bottom\:5px\;padding\-top\:5px"><table class="ts"><tr><td>(.+?)</td></tr></table>', urllib2.build_opener().open(req).read())
+    return "%(wordtype)s: %(definition)s" % dict(wordtype=regex1[0][0], definition=regex[0][1])
 def partfilter(inputtext) :
     for entity in htmlentitydefs.entitydefs.keys() :
         inputtext = inputtext.replace("&%s;" % (entity), htmlentitydefs.entitydefs[entity])
