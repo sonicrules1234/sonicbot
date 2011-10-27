@@ -16,7 +16,7 @@ def gdefine(word):
     #return re.findall("""
     #return re.sub("^\d+\. ", "", regex1[0].split("</div><div>")[0])
     regex1 = re.findall('style="padding\-bottom\:5px\;padding-top\:5px\;color\:\#666">(.+?)\:</td><td valign="top" style="padding\-bottom\:5px\;padding\-top\:5px"><table class="ts"><tr><td>(.+?)</td></tr></table>', urllib2.build_opener().open(req).read())
-    return "%(wordtype)s: %(definition)s" % dict(wordtype=regex1[0][0], definition=regex[0][1])
+    return "%(wordtype)s: %(definition)s" % dict(wordtype=regex1[0][0], definition=regex1[0][1])
 def partfilter(inputtext) :
     for entity in htmlentitydefs.entitydefs.keys() :
         inputtext = inputtext.replace("&%s;" % (entity), htmlentitydefs.entitydefs[entity])
