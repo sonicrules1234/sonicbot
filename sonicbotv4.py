@@ -257,7 +257,7 @@ class sonicbot() :
                 except : traceback.print_exc()
     def allowed(self, info, minlevel) :
         """Authenticates users"""
-        if not self.ignored(info) :
+        if not self.isignored(info) :
             if info["sender"] not in self.users["users"].keys() :
                 self.users["users"][info["sender"]] = {"hostname":[self.hostnames[info["sender"]]], "userlevel":1}
                 self.users.sync()
