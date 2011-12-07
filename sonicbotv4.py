@@ -68,6 +68,7 @@ class sonicbot() :
         self.chanmodes = {}
         self.channellist = {}
         self.hostnames = {}
+        self.whoislist = {}
         self.users = shelve.open("users-%s.db" % (self.networkname), writeback=True)
         if not self.users.has_key("users") :
             #self.users["salt"] = self.gensalt()
@@ -206,6 +207,7 @@ class sonicbot() :
                     info["whois"] = info["words"][0]
                     info["sender"] = info["whois"].split("!")[0]
                 except : traceback.print_exc()
+                self.whoislist[info["sender"]] = info["whois"]
                 try : 
                     info["hostname"] = info["whois"].split("@")[1]
                     self.hostnames[info["sender"]] = info["hostname"]
