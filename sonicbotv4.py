@@ -1,5 +1,5 @@
 
-import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve, string
+import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve, string, fnmatch
 import gettext, hookstartup, traceback, os, random
 lang = gettext.translation("english", "./locale", languages=["en"])
 lang.install()
@@ -30,6 +30,11 @@ class sonicbot() :
         if self.networkname not in glob.glob("*") :
             os.mkdir(self.networkname)
         self.debug = False
+    def isignored(self, info) :
+        for ignorepattern in self.ignorelist :
+            if fnmatch.fnmatch(info["whois"], ignorepattern) :
+                return True
+        return False
     def logwrite(self, channel, log) :
         """Logs things to file, also is used when relaying"""
         if channel in self.channellist :
@@ -252,26 +257,28 @@ class sonicbot() :
                 except : traceback.print_exc()
     def allowed(self, info, minlevel) :
         """Authenticates users"""
-        if info["sender"] not in self.users["users"].keys() :
-            self.users["users"][info["sender"]] = {"hostname":[self.hostnames[info["sender"]]], "userlevel":1}
-            self.users.sync()
-        if self.users["users"][info["sender"]]["userlevel"] in [0, 1] and self.hostnames[info["sender"]] not in self.users["users"][info["sender"]]["hostname"]:
-            self.users["users"][info["sender"]]["hostname"].append(self.hostnames[info["sender"]])
-            self.users.sync()
-        if info["hostname"] in self.users["users"][info["sender"]]["hostname"] or minlevel == 1 :
-            if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
-                if minlevel != 3 or self.users["users"][info["sender"]]["userlevel"] in [4, 5] : return True
-                else :
-                    if self.users["users"][info["sender"]].has_key("channels") :
-                        if info["channel"] in self.users["users"][info["sender"]]["channels"] :
-                            return True
+        if not self.ignored(info) :
+            if info["sender"] not in self.users["users"].keys() :
+                self.users["users"][info["sender"]] = {"hostname":[self.hostnames[info["sender"]]], "userlevel":1}
+                self.users.sync()
+            if self.users["users"][info["sender"]]["userlevel"] in [0, 1] and self.hostnames[info["sender"]] not in self.users["users"][info["sender"]]["hostname"]:
+                self.users["users"][info["sender"]]["hostname"].append(self.hostnames[info["sender"]])
+                self.users.sync()
+            if info["hostname"] in self.users["users"][info["sender"]]["hostname"] or minlevel == 1 :
+                if self.users["users"][info["sender"]]["userlevel"] >= minlevel :
+                    if minlevel != 3 or self.users["users"][info["sender"]]["userlevel"] in [4, 5] : return True
+                    else :
+                        if self.users["users"][info["sender"]].has_key("channels") :
+                            if info["channel"] in self.users["users"][info["sender"]]["channels"] :
+                                return True
+                            else : return False
                         else : return False
-                    else : return False
-            else : return False
+                else : return False
+            else :
+                self.ircsend(info["sender"], _("Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command."))
+                return False
         else :
-            self.ircsend(info["sender"], _("Your nick does not match your hostname.  If you are the owner of this nick, you need to use the addhost command."))
             return False
-
 def floodControl() :
     while True :
         currenttime = world.time
