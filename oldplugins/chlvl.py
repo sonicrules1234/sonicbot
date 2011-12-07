@@ -11,7 +11,7 @@ def main(connection, info, args) :
         if len(args) == 4 :
             if int(args[2]) == 0 :
                 self.ignorelist.append(args[3])
-                connection.msg(info["channel"], len(fnmatch.filter(connection.channellist[info["channel"]], args[3]) + " users ignored with this mask")
+                connection.msg(info["channel"], len(fnmatch.filter(connection.channellist[info["channel"]], args[3])) + " users ignored with this mask")
             elif connection.users["users"][args[1]]["userlevel"] == 0 and int(args[2]) != 0:
                 self.ignorelist.remove(args[3])
     else : connection.msg(info["channel"], _("No such user in my database."))
