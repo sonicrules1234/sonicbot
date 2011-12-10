@@ -17,13 +17,16 @@ def main(self, info) :
                 elif letter == "-" : modetype = False
                 else :
                     if letter in modesymbols.keys() :
-                        print self.host
-                        if modetype :
-                            if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                                self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
-                        elif not modetype :
-                            if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
-                                self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
+                        if letter == "q" and recvrs[recvr] not in self.channellist[info["channel"]] :
+                            pass
+                        else :
+                            print self.host
+                            if modetype :
+                                if letter not in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                    self.chanmodes[info["channel"]][recvrs[recvr]].append(modesymbols[letter])
+                            elif not modetype :
+                                if letter in self.chanmodes[info["channel"]][recvrs[recvr]] :
+                                    self.chanmodes[info["channel"]][recvrs[recvr]].remove(letter)
                         recvr += 1
         else :
             self.logwrite(self.nick, _("[%(time)s] **%(nick)s set mode %(mode)s on %(channel)s\n") % dict(time=time.strftime("%b %d %Y, %H:%M:%S %Z"), nick=info["sender"], mode=mode, channel=info["channel"]))
