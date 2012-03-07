@@ -5,4 +5,4 @@ minlevel = 1
 
 def main(connection, info, args) :
     """Evaluates regex"""
-    connection.msg(info["channel"], repr(re.search(args[1], args[2]).groups()))
+    connection.msg(info["channel"], repr(re.search(args[1], " ".join(args[2:])).groups()))
