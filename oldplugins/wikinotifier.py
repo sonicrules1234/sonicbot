@@ -1,9 +1,9 @@
 import feedparser, shelve, thread, time
-arguments = ["self", "info", "args", "world", "thread"]
+arguments = ["self", "info", "args", "world"]
 helpstring = "wikinotifier <title> <feed url> <on/off>"
 minlevel = 3
 
-def main(connection, info, args, world, thread) :
+def main(connection, info, args, world) :
     """Starts the loop of checking a wiki feed"""
     feedurl = args[-2]
     onoff = args[-1]
