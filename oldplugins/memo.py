@@ -10,7 +10,7 @@ def main(connection, info, args) :
         db[args[1].lower()] = []
         db.sync()
     if len(db[args[1].lower()]) < 3 :
-        if len(db[args[1].lower()) > 0 :
+        if len(db[args[1]].lower()) > 0 :
             if " ".join(args[2:]) == db[args[1].lower()][-1]["message"] and info["sender"] == db[args[1].lower()][-1]["sender"] :
                 connection.ircsend(info["channel"], "%(sender)s: Ignoring repeated message." % dict(sender=info["sender"]))
         else :
