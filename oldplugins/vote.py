@@ -13,7 +13,7 @@ def main(connection, info, args, world) :
             votes["networks"][connection.networkname][int(args[1]) - 1]["voters"].append(info["sender"])
             votes.sync()
             connection.msg(info["sender"], _("You have successfully voted '%(vote)s' on '%(topic)s'.") % dict(vote=votes["networks"][connection.networkname][int(args[1]) - 1]["choices"][int(args[2]) - 1]["choice"], topic=votes["networks"][connection.networkname][int(args[1]) - 1]["topic"]))
-        elif (int(args[1]) -1) < 1 :
+        elif (int(args[1]) -1) < 0 :
             connection.msg(info["channel"], "Invalid vote!", True)
         else : connection.msg(info["channel"], _("%(sender)s: You have already voted!") % dict(sender=info["sender"]))
     else : connection.msg(info["channel"], _("That vote has not yet started!"))
