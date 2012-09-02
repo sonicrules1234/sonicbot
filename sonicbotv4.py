@@ -172,6 +172,14 @@ class sonicbot() :
         elif world.time < self.timer :
             world.timer.append([self.timer + 1, {"function":function, "arguments":(channel, line)}])
             self.timer += 1
+    def determineGeneralTiming(self, function, args, waitvalue) :
+        if world.time >= self.timer :
+            world.timer.append([world.time + waitvalue, {"function":function, "arguments":args}])
+            self.timer = world.time + 1
+        elif world.time < self.timer :
+            world.timer.append([self.timer + waitvalue, {"function":function, "arguments":args}])
+            self.timer += 1
+
     def part(self, channel, reason=None) :
         if reason == None :
             self.rawsend("PART %s\r\n" % (channel))
