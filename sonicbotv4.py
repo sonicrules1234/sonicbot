@@ -296,7 +296,7 @@ def floodControl() :
         for y, x in enumerate(worldtimer) :
             if x[0] == currenttime :
                 x[1]["function"](*x[1]["arguments"])
-                world.timer.pop(y)
+                world.timer.remove(x)
             #else :
             #    break
         del worldtimer
