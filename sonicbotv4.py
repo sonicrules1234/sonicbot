@@ -293,9 +293,9 @@ def floodControl() :
     while True :
         currenttime = world.time
         worldtimer = world.timer[:]
-        for x in worldtimer :
+        for y, x in enumerate(worldtimer) :
             if x[0] < currenttime :
-                world.timer.pop(0)
+                world.timer.pop(y)
             elif x[0] == currenttime :
                 x[1]["function"](*x[1]["arguments"])
             #else :
