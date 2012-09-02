@@ -293,7 +293,6 @@ def floodControl() :
     while True :
         currenttime = world.time
         worldtimer = world.timer[:]
-        while again :
         for y, x in enumerate(worldtimer) :
             if x[0] == currenttime :
                 x[1]["function"](*x[1]["arguments"])
