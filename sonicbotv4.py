@@ -298,8 +298,8 @@ def floodControl() :
                 world.timer.pop(0)
             elif x[0] == currenttime :
                 x[1]["function"](*x[1]["arguments"])
-            else :
-                break
+            #else :
+            #    break
         del worldtimer
         time.sleep(1)
         world.time += 1
