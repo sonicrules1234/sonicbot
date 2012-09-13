@@ -43,7 +43,11 @@ def main(self, info, world) :
                             self.error = traceback.format_exc()
                             self.msg(info["channel"], "Error")
                             print self.error
-
+        elif info["sender"] == info["channel"] :
+            try :
+                if isfactoid(info["message"][len(self.trigger):]) :
+                    self.msg(info["channel"], getfactoid(info["message"][len(self.trigger):], info))
+            except: traceback.print_exc()            
         elif args[0].lower() not in self.users["channels"][info["channel"]]["enabled"] :
             try :
                 if isfactoid(info["message"][len(self.trigger):]) :
