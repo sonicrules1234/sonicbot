@@ -5,7 +5,7 @@ def main(self, info, args, world) :
     """addfactoid <factoid> is <definition>
 Adds a factoid"""
     factoids = shelve.open("factoids.db", writeback=True)
-    factoid = args[1]
+    factoid = args[1].lower()
     definition = info["message"].split(" is ", 1)[1]
     creation = time.time()
     creator = info["whois"]
