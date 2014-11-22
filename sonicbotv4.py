@@ -1,4 +1,4 @@
-
+#import cwiid
 import json, ssl, select, world, socket, thread, time, traceback, imp, glob, shelve, string, fnmatch
 import gettext, hookstartup, traceback, os, random
 lang = gettext.translation("english", "./locale", languages=["en"])
@@ -20,8 +20,8 @@ class sonicbot() :
         self.buffer = ""
         self.owner = owner
         self.admin = admin
-        self.ignorelist = []
-        self.hostignores = []
+        self.ignorelist = ["*!*@Shadow666.user.gamesurge"]
+        self.hostignores = ["Shadow666.user.gamesurge"]
         if self.ipv6 :
             self.socktype = socket.AF_INET6
         else : self.socktype = socket.AF_INET
@@ -237,10 +237,6 @@ class sonicbot() :
                 if error != 1 : self.prettify(info)
     def prettify(self, info) :
 #        print repr(world.hooks)
-        if world.hooks.has_key(info["mode"]) :
-            for hook in world.hooks[info["mode"]] :
-                arguments = eval(", ".join(hook["arguments"]))
-                hook["function"].main(*arguments)
         if info["mode"] == "PRIVMSG" :
             if info["message"].split(" ")[0] == self.trigger + "reload" and self.allowed(info, 5) :
                 del world.plugins
@@ -265,6 +261,10 @@ class sonicbot() :
                     channels = args[7:]
                     makeNewConnection(networkname, self.nick, self.ident, self.realname, host, port, channels, ssl, ipv6, self.password, self.trigger, self.owner, admin)
                 except : traceback.print_exc()
+        if world.hooks.has_key(info["mode"]) :
+            for hook in world.hooks[info["mode"]] :
+                arguments = eval(", ".join(hook["arguments"]))
+                hook["function"].main(*arguments)
     def allowed(self, info, minlevel) :
         """Authenticates users"""
         if not self.isignored(info) :
@@ -342,6 +342,7 @@ def waitfordata() :
 def makeNewConnection(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin) :
     v = sonicbot(networkname, nick, ident, realname, host, port, channels, ssl, ipv6, password, trigger, owner, admin)
     v.connect()
+#world.wm = cwiid.Wiimote()
 conffile = open("conf.json", "r")
 conf = conffile.read()
 conffile.close()
