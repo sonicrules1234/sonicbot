@@ -20,8 +20,8 @@ class sonicbot() :
         self.buffer = ""
         self.owner = owner
         self.admin = admin
-        self.ignorelist = ["*!*@Shadow666.user.gamesurge"]
-        self.hostignores = ["Shadow666.user.gamesurge"]
+        self.ignorelist = []
+        self.hostignores = []
         if self.ipv6 :
             self.socktype = socket.AF_INET6
         else : self.socktype = socket.AF_INET
@@ -32,7 +32,7 @@ class sonicbot() :
         self.debug = False
     def isignored(self, info) :
         for ignorepattern in self.ignorelist :
-            if fnmatch.fnmatch(info["whois"], ignorepattern) :
+            if fnmatch.fnmatch(info["whois"].lower(), ignorepattern) :
                 return True
         return False
     def logwrite(self, channel, log) :
