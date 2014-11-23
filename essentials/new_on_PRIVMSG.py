@@ -50,7 +50,7 @@ def main(self, info, world) :
             except: traceback.print_exc()            
         elif args[0].lower() not in self.users["channels"][info["channel"]]["enabled"] :
             try :
-                if isfactoid(info["message"][len(self.trigger):]) :
+                if isfactoid(info["message"][len(self.trigger):]) and not self.isignored(info) :
                     self.msg(info["channel"], getfactoid(info["message"][len(self.trigger):], info))
             except: traceback.print_exc()
 def isfactoid(fact) :
